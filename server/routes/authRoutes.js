@@ -1,5 +1,5 @@
 import express from "express";
-import { signup, verifyMagicLink, login } from "../controllers/authController.js";
+import { signup, verifyMagicLink, login, getMe } from "../controllers/authController.js";
 
 const router = express.Router();
 

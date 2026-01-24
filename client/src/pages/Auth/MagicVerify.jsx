@@ -10,7 +10,7 @@ const MagicVerify = () => {
     const verify = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/auth/verify${search}`
+          `/api/auth/verify${search}`
         );
 
         // SAVE token

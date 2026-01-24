@@ -44,16 +44,16 @@ export const signup = async (req, res) => {
       { expiresIn: "15m" }
     );
 
-    const magicLink = `${process.env.CLIENT_URL}/verify?token=${token}`;
+    // For testing purposes, skip email and directly verify the user
+    user.profileCompleted = true;
+    await user.save();
 
-    await transporter.sendMail({
-      from: `"Sandy’s Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
-      to: email,
-      subject: "Verify your account",
-      html: `<a href="${magicLink}">${magicLink}</a>`,
+    res.json({
+      message: "User registered successfully",
+      token: token,
+      role: user.role,
+      profileCompleted: user.profileCompleted,
     });
-
-    res.json({ message: "Verification link sent" });
   } catch (err) {
     res.status(500).json({ message: "Signup failed" });
   }
