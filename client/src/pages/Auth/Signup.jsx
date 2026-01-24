@@ -1,0 +1,63 @@
+import { useState } from "react";
+import axios from "axios";
+
+const Signup = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignup = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/auth/signup", {
+        name,
+        email,
+        password,
+      });
+
+      alert("Magic link sent to your email");
+    } catch (err) {
+      alert(err.response?.data?.message || "Signup failed");
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-amber-50">
+      <div className="bg-white p-6 rounded-2xl shadow-lg w-80">
+        <h2 className="text-2xl font-bold text-center text-amber-600 mb-4">
+          Register
+        </h2>
+
+        {/* NAME INPUT */}
+        <input
+          type="text"
+          placeholder="Name"
+          className="w-full border p-2 rounded mb-3"
+          onChange={(e) => setName(e.target.value)}
+        />
+
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full border p-2 rounded mb-3"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full border p-2 rounded mb-4"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button
+          onClick={handleSignup}
+          className="w-full bg-amber-500 text-white py-2 rounded font-semibold"
+        >
+          Register & Get Magic Link
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default Signup;
