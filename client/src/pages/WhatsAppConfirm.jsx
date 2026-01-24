@@ -76,20 +76,25 @@ Address: ${order.customer?.address}
       // ✅ FIRST navigate to success page
       navigate("/order-success");
 
-      // ✅ THEN open WhatsApp in new tab
-      window.open(
-        `https://wa.me/${order.customer?.phone}?text=${encodeURIComponent(
-          customerMsg
-        )}`,
-        "_blank"
-      );
+      // ✅ THEN open WhatsApp (mobile-friendly approach)
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-      window.open(
-        `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(
-          adminMsg
-        )}`,
-        "_blank"
-      );
+      if (isMobile) {
+        // On mobile, use direct location change for better WhatsApp app opening
+        setTimeout(() => {
+          window.location.href = `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(adminMsg)}`;
+        }, 1000);
+      } else {
+        // On desktop, use window.open
+        window.open(
+          `https://wa.me/${order.customer?.phone}?text=${encodeURIComponent(customerMsg)}`,
+          "_blank"
+        );
+        window.open(
+          `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(adminMsg)}`,
+          "_blank"
+        );
+      }
 
     } catch (error) {
       console.log(error);
