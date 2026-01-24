@@ -20,7 +20,7 @@ const AdminDashboard = () => {
   const fetchOrders = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/admin/orders",
+        "/api/admin/orders",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -38,7 +38,7 @@ const AdminDashboard = () => {
     if (!window.confirm("Delete this order?")) return;
 
     await axios.delete(
-      `http://localhost:5000/api/admin/orders/${id}`,
+      `/api/admin/orders/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

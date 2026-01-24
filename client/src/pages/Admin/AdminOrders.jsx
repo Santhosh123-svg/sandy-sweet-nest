@@ -6,7 +6,7 @@ const AdminOrders = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/orders", {
+    axios.get("/api/orders", {
       headers: { Authorization: `Bearer ${token}` },
     }).then(res => setOrders(res.data));
   }, []);
