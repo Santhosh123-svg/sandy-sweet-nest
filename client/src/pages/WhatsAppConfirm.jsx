@@ -73,17 +73,19 @@ Phone: ${order.customer?.phone}
 Address: ${order.customer?.address}
 `;
 
-      // ✅ FIRST navigate to success page
-      navigate("/order-success");
-
-      // ✅ THEN open WhatsApp (mobile-friendly approach)
+      // ✅ Open WhatsApp BEFORE navigating to success page for better mobile support
       const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
       if (isMobile) {
-        // On mobile, use direct location change for better WhatsApp app opening
-        setTimeout(() => {
+        // On mobile, use window.open with _blank for better app opening
+        const whatsappWindow = window.open(
+          `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(adminMsg)}`,
+          "_blank"
+        );
+        // Fallback for Android if window.open is blocked
+        if (!whatsappWindow) {
           window.location.href = `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(adminMsg)}`;
-        }, 1000);
+        }
       } else {
         // On desktop, use window.open
         window.open(
@@ -95,6 +97,9 @@ Address: ${order.customer?.address}
           "_blank"
         );
       }
+
+      // ✅ THEN navigate to success page
+      navigate("/order-success");
 
     } catch (error) {
       console.log(error);

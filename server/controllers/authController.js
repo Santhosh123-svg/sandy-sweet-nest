@@ -49,9 +49,23 @@ export const signup = async (req, res) => {
     await transporter.sendMail({
       from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
       to: email,
-      subject: "Verify your account",
-      html: `<a href="${magicLink}">${magicLink}</a>`,
+      subject: "Welcome to Sandy's Sweet Nest - Verify Your Account",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+          <h2 style="color: #d97706;">Welcome to Sandy's Sweet Nest! 🍰</h2>
+          <p>Thank you for registering with us. We're excited to have you join our community of sweet lovers!</p>
+          <p>To complete your registration and start ordering delicious cakes, chocolates, and more, please verify your email address by clicking the button below:</p>
+          <a href="${magicLink}" style="display: inline-block; padding: 10px 20px; background-color: #d97706; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">Verify My Account</a>
+          <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
+          <p style="word-break: break-all; background-color: #fff; padding: 10px; border: 1px solid #ddd;">${magicLink}</p>
+          <p>This link will expire in 15 minutes for security reasons.</p>
+          <p>If you didn't create an account, please ignore this email.</p>
+          <p>Best regards,<br>The Sandy's Sweet Nest Team</p>
+        </div>
+      `,
     });
+
+    console.log(`Magic link email sent to ${email}`);
 
     res.json({ message: "Verification link sent" });
   } catch (err) {
