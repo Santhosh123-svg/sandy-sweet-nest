@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
@@ -29,7 +29,7 @@ app.use("/api/orders", orderRoutes);
 
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
-app.get(/.*/, (req, res) => {
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 

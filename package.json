@@ -1,6 +1,7 @@
 {
   "name": "mern-monorepo",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "install-all": "npm install && cd server && npm install && cd ../client && npm install && cd ..",
     "build": "cd client && npm run build && cd ..",
