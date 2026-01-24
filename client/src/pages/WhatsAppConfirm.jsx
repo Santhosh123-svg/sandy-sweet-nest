@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import { motion } from "framer-motion";
 import { Send, CheckCircle } from "lucide-react";
 import { useOrder } from "../context/OrderContext";
@@ -25,15 +25,7 @@ const WhatsAppConfirm = () => {
 
     try {
       // ✅ Save order to backend
-      await axios.post(
-        "http://localhost:5000/api/orders",
-        order,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axiosInstance.post("/orders", order);
 
       // 🔥 CUSTOMER MESSAGE
       const customerMsg = `
