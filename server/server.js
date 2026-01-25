@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import path from "path";
 
 import adminRoutes from "./routes/adminRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -17,12 +18,12 @@ app.use(cors({ origin: true }));
 app.use(express.json());
 
 // API routes
-app.use("/auth", authRoutes);
-app.use("/profile", profileRoutes);
-app.use("/admin", adminRoutes);
-app.use("/test", testRoutes);
-app.use("/products", productRoutes);
-app.use("/orders", orderRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/test", testRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 // ❌ Remove these lines if backend is separate
 // app.use(express.static(path.join(__dirname, "../client/dist")));
