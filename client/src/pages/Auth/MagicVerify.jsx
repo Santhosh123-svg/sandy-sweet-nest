@@ -25,7 +25,7 @@ const MagicVerify = () => {
     };
 
     verify();
-  }, []);
+  }, [navigate, search]);
 
   return <div className="text-center mt-10">Verifying magic link…</div>;
 };

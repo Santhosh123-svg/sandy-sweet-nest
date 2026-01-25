@@ -87,7 +87,7 @@ export const signup = async (req, res) => {
       { expiresIn: "15m" }
     );
 
-    const magicLink = `${process.env.CLIENT_URL}/verify?token=${token}`;
+    const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
     // Respond immediately, send email asynchronously
     res.json({ message: "Verification link sent" });
@@ -122,17 +122,31 @@ export const signup = async (req, res) => {
 };
 
 /* =========================
-   MAGIC VERIFY (ONLY REDIRECT)
+   MAGIC VERIFY (RETURN JSON)
 ========================= */
 export const verifyMagicLink = async (req, res) => {
   try {
     const { token } = req.query;
-    jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
 
-    // ONLY redirect, no login here
-    res.redirect(`${process.env.CLIENT_URL}/login`);
-  } catch {
-    res.redirect(`${process.env.CLIENT_URL}/login`);
+    if (!user) {
+      return res.status(400).json({ message: "Invalid token" });
+    }
+
+    const authToken = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      token: authToken,
+      profileCompleted: user.profileCompleted,
+      email: user.email,
+    });
+  } catch (err) {
+    res.status(400).json({ message: "Invalid or expired token" });
   }
 };
 
