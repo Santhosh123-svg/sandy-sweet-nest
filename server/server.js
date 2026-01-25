@@ -25,11 +25,10 @@ app.use("/api/test", testRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 
-// ❌ Remove these lines if backend is separate
-// app.use(express.static(path.join(__dirname, "../client/dist")));
-// app.use((req, res) => {
-//   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
-// });
+app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"));
