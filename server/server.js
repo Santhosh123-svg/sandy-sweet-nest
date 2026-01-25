@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import path from "path";
+import { fileURLToPath } from "url";
 
 import adminRoutes from "./routes/adminRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -11,13 +12,16 @@ import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 dotenv.config();
 const app = express();
 
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-// API routes
+// 🔥 API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/admin", adminRoutes);
@@ -25,7 +29,10 @@ app.use("/api/test", testRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 
+// 🔥 Serve frontend
 app.use(express.static(path.join(__dirname, "../client/dist")));
+
+// 🟢 IMPORTANT: fallback after all API routes
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
