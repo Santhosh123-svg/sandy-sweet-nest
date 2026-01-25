@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import path from "path";
 import { fileURLToPath } from "url";
+
 import adminRoutes from "./routes/adminRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
@@ -20,19 +21,20 @@ const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/profile", profileRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/test", testRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes);
+// 🔥 UPDATED ROUTES (no /api prefix)
+app.use("/auth", authRoutes);
+app.use("/profile", profileRoutes);
+app.use("/admin", adminRoutes);
+app.use("/test", testRoutes);
+app.use("/products", productRoutes);
+app.use("/orders", orderRoutes);
 
+// Serve frontend
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
-
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"));
