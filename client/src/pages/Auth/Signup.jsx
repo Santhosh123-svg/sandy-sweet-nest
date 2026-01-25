@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -8,13 +8,13 @@ const Signup = () => {
 
   const handleSignup = async () => {
     try {
-      await axios.post("/api/auth/signup", {
+      const res = await axiosInstance.post("/auth/signup", {
         name,
         email,
         password,
       });
 
-      alert("Magic link sent to your email");
+      alert(res.data.message || "Magic link sent to your email");
     } catch (err) {
       alert(err.response?.data?.message || "Signup failed");
     }
@@ -27,7 +27,6 @@ const Signup = () => {
           Register
         </h2>
 
-        {/* NAME INPUT */}
         <input
           type="text"
           placeholder="Name"

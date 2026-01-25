@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
 const MagicVerify = () => {
   const navigate = useNavigate();
@@ -9,17 +9,17 @@ const MagicVerify = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const { data } = await axios.get(
-          `/api/auth/verify${search}`
-        );
+        const { data } = await axiosInstance.get(`/auth/verify${search}`);
 
-        // SAVE token
-        localStorage.setItem("magicToken", data.token);
+        localStorage.setItem("token", data.token);
 
-        // go to login
-        navigate("/login");
+        if (!data.profileCompleted) {
+          navigate("/complete-profile");
+        } else {
+          navigate("/welcome");
+        }
       } catch (err) {
-        alert(err.response?.data?.message || "Invalid link");
+        alert(err.response?.data?.message || "Invalid or expired link");
         navigate("/login");
       }
     };
@@ -27,7 +27,7 @@ const MagicVerify = () => {
     verify();
   }, []);
 
-  return <div>Verifying...</div>;
+  return <div className="text-center mt-10">Verifying magic link…</div>;
 };
 
 export default MagicVerify;
