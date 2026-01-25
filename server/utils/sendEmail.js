@@ -1,30 +1,31 @@
-import Brevo from "brevo";
+import nodemailer from "nodemailer";
 
-const client = new Brevo({
-  apiKey: process.env.BREVO_API_KEY,
+const transporter = nodemailer.createTransport({
+  service: "gmail", // change if not Gmail
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
 });
 
-export const sendMagicLink = async (email, link, subject = "Verify your account") => {
-  try {
-    await client.sendTransacEmail({
-      sender: {
-        name: "Sandy's Sweet Nest 🍰",
-        email: process.env.MAIL_FROM,
-      },
-      to: [{ email }],
-      subject,
-      htmlContent: `
-        <h3>Sandy's Sweet Nest 🍰</h3>
-        <p>Click the link below:</p>
-        <a href="${link}">${link}</a>
-        <p>This link is valid for 10 minutes.</p>
-      `,
-    });
+export default transporter;
 
-    console.log(`✅ Email sent to ${email}`);
+// Magic Link Function
+export const sendMagicLink = async (toEmail, magicLink) => {
+  try {
+    const mailOptions = {
+      from: `"Sandy's Sweet Nest" <${process.env.MAIL_USER}>`,
+      to: toEmail,
+      subject: "Your Magic Login Link",
+      html: `
+        <h3>Click below to login</h3>
+        <a href="${magicLink}">Login Now</a>
+      `,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Magic link sent: ", info.response);
   } catch (error) {
-    console.error(`❌ Email failed to ${email}:`, error.response?.body || error.message);
+    console.log("Magic link error: ", error);
   }
 };
-
-export default client;
