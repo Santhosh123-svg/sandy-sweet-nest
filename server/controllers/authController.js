@@ -1,21 +1,10 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import transporter, { sendMagicLink } from "../utils/sendEmail.js";
 
 dotenv.config();
-
-/* =========================
-   MAIL SETUP
-========================= */
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
 
 /* =========================
    SIGNUP (MAGIC LINK ONLY)
@@ -26,6 +15,7 @@ export const signup = async (req, res) => {
   try {
     const exists = await User.findOne({ email });
 
+    // 🔁 User exists but not verified
     if (exists && !exists.profileCompleted) {
       const token = jwt.sign({ id: exists._id }, process.env.JWT_SECRET, {
         expiresIn: "15m",
@@ -33,12 +23,7 @@ export const signup = async (req, res) => {
 
       const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-      await transporter.sendMail({
-        from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
-        to: email,
-        subject: "Verify your account",
-        html: `<p>Click below to verify:</p><a href="${magicLink}">${magicLink}</a>`,
-      });
+      await sendMagicLink(email, magicLink);
 
       return res.json({ message: "Verification link sent" });
     }
@@ -63,12 +48,7 @@ export const signup = async (req, res) => {
 
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-    await transporter.sendMail({
-      from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
-      to: email,
-      subject: "Verify your account",
-      html: `<p>Click below to verify:</p><a href="${magicLink}">${magicLink}</a>`,
-    });
+    await sendMagicLink(email, magicLink);
 
     res.json({ message: "Verification link sent" });
   } catch (err) {
@@ -104,7 +84,7 @@ export const verifyMagicLink = async (req, res) => {
       profileCompleted: user.profileCompleted,
       email: user.email,
     });
-  } catch (err) {
+  } catch {
     res.status(400).json({ message: "Invalid or expired token" });
   }
 };
@@ -161,12 +141,11 @@ export const sendMagicLinkForLogin = async (req, res) => {
 
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-    await transporter.sendMail({
-      from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
-      to: email,
-      subject: "Login to Sandy's Sweet Nest",
-      html: `<p>Click below to login:</p><a href="${magicLink}">${magicLink}</a>`,
-    });
+    await sendMagicLink(
+      email,
+      magicLink,
+      "Login to Sandy's Sweet Nest"
+    );
 
     res.json({ message: "Magic link sent to your email" });
   } catch (error) {
@@ -202,16 +181,16 @@ export const getMe = async (req, res) => {
 export const testMail = async (req, res) => {
   try {
     await transporter.sendMail({
-      from: `"Test Mail" <${process.env.MAIL_USER}>`,
-      to: process.env.MAIL_USER,
-      subject: "Test Mail from Sandy's Sweet Nest",
-      html: "<h1>Mail working ✅</h1>",
+      from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_FROM}>`,
+      to: process.env.MAIL_FROM,
+      subject: "Brevo Test Mail ✅",
+      html: "<h1>Mail system working perfectly 🔥</h1>",
     });
 
     console.log("✅ Test mail sent");
-    res.send("Mail sent");
+    res.json({ success: true, message: "Mail sent successfully" });
   } catch (e) {
     console.error("❌ Test mail failed:", e);
-    res.status(500).send("Mail failed");
+    res.status(500).json({ success: false, message: "Mail failed" });
   }
 };
