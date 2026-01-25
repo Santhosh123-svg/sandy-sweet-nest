@@ -23,6 +23,8 @@ const transporter = nodemailer.createTransport({
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
+  console.log("SIGNUP HIT");
+
   try {
     const exists = await User.findOne({ email });
 
@@ -39,7 +41,10 @@ export const signup = async (req, res) => {
 
         const magicLink = `${process.env.CLIENT_URL}/verify?token=${token}`;
 
-        await transporter.sendMail({
+        // Respond immediately, send email asynchronously
+        res.json({ message: "Verification link sent" });
+
+        transporter.sendMail({
           from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
           to: email,
           subject: "Welcome to Sandy's Sweet Nest - Verify Your Account",
@@ -56,11 +61,13 @@ export const signup = async (req, res) => {
               <p>Best regards,<br>The Sandy's Sweet Nest Team</p>
             </div>
           `,
+        }).then(() => {
+          console.log(`Magic link resent to ${email}`);
+        }).catch((err) => {
+          console.error(`Failed to resend magic link to ${email}:`, err);
         });
 
-        console.log(`Magic link resent to ${email}`);
-
-        return res.json({ message: "Verification link sent" });
+        return;
       }
     }
 
@@ -82,7 +89,10 @@ export const signup = async (req, res) => {
 
     const magicLink = `${process.env.CLIENT_URL}/verify?token=${token}`;
 
-    await transporter.sendMail({
+    // Respond immediately, send email asynchronously
+    res.json({ message: "Verification link sent" });
+
+    transporter.sendMail({
       from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
       to: email,
       subject: "Welcome to Sandy's Sweet Nest - Verify Your Account",
@@ -99,12 +109,14 @@ export const signup = async (req, res) => {
           <p>Best regards,<br>The Sandy's Sweet Nest Team</p>
         </div>
       `,
+    }).then(() => {
+      console.log(`Magic link email sent to ${email}`);
+    }).catch((err) => {
+      console.error(`Failed to send magic link to ${email}:`, err);
     });
 
-    console.log(`Magic link email sent to ${email}`);
-
-    res.json({ message: "Verification link sent" });
   } catch (err) {
+    console.error("Signup error:", err);
     res.status(500).json({ message: "Signup failed" });
   }
 };
