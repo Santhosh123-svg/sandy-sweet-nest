@@ -18,39 +18,37 @@ const transporter = nodemailer.createTransport({
 });
 
 /* =========================
-   SIGNUP (MAGIC LINK ONLY HERE)
+   SIGNUP (MAGIC LINK ONLY)
 ========================= */
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
-  console.log("SIGNUP HIT");
-
   try {
     const exists = await User.findOne({ email });
 
+    // If user exists but not verified
+    if (exists && !exists.profileCompleted) {
+      const token = jwt.sign(
+        { id: exists._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+      );
+
+      const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
+
+      await transporter.sendMail({
+        from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
+        to: email,
+        subject: "Verify your account",
+        html: `<p>Click below to verify:</p><a href="${magicLink}">${magicLink}</a>`,
+      });
+
+      return res.json({ message: "Verification link sent" });
+    }
+
+    // Already verified user
     if (exists) {
-      if (exists.profileCompleted) {
-        return res.status(400).json({ message: "User already exists" });
-      } else {
-        const token = jwt.sign(
-          { id: exists._id },
-          process.env.JWT_SECRET,
-          { expiresIn: "15m" }
-        );
-
-        const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
-
-        res.json({ message: "Verification link sent" });
-
-        transporter.sendMail({
-          from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
-          to: email,
-          subject: "Verify your account",
-          html: `<p>Click below to verify:</p><a href="${magicLink}">${magicLink}</a>`,
-        });
-
-        return;
-      }
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const hashed = await bcrypt.hash(password, 10);
@@ -71,14 +69,14 @@ export const signup = async (req, res) => {
 
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-    res.json({ message: "Verification link sent" });
-
-    transporter.sendMail({
+    await transporter.sendMail({
       from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
       to: email,
       subject: "Verify your account",
       html: `<p>Click below to verify:</p><a href="${magicLink}">${magicLink}</a>`,
     });
+
+    res.json({ message: "Verification link sent" });
 
   } catch (err) {
     console.error("Signup error:", err);
@@ -96,9 +94,12 @@ export const verifyMagicLink = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
 
-    if (!user) {
+    if (!user)
       return res.status(400).json({ message: "Invalid token" });
-    }
+
+    // ✅ mark verified
+    user.profileCompleted = true;
+    await user.save();
 
     const authToken = jwt.sign(
       { id: user._id, role: user.role },
@@ -111,7 +112,7 @@ export const verifyMagicLink = async (req, res) => {
       profileCompleted: user.profileCompleted,
       email: user.email,
     });
-  } catch {
+  } catch (err) {
     res.status(400).json({ message: "Invalid or expired token" });
   }
 };
@@ -148,17 +149,15 @@ export const login = async (req, res) => {
 };
 
 /* =========================
-   MAGIC LINK LOGIN (SEND ONLY)
+   MAGIC LINK LOGIN (SEND)
 ========================= */
 export const sendMagicLinkForLogin = async (req, res) => {
   try {
     const { email } = req.body;
-
     if (!email)
       return res.status(400).json({ message: "Email is required" });
 
     const user = await User.findOne({ email });
-
     if (!user)
       return res.status(404).json({ message: "User not found" });
 
@@ -190,7 +189,8 @@ export const sendMagicLinkForLogin = async (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user)
+      return res.status(404).json({ message: "User not found" });
 
     res.json({
       id: user._id,
@@ -204,23 +204,14 @@ export const getMe = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
+/* =========================
+   TEST MAIL
+========================= */
 export const testMail = async (req, res) => {
   try {
     await transporter.sendMail({
       from: `"Test Mail" <${process.env.MAIL_USER}>`,
-      to: process.env.MAIL_USER, // same gmail for test
+      to: process.env.MAIL_USER,
       subject: "Test Mail from Sandy's Sweet Nest",
       html: "<h1>Mail working ✅</h1>",
     });

@@ -3,7 +3,8 @@ import {
   signup,
   verifyMagicLink,
   login,
-  getMe
+  getMe,
+  testMail
 } from "../controllers/authController.js";
 import verifyToken from "../middleware/authMiddleware.js";
 
