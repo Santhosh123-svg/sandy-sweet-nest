@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useOrder } from "../context/OrderContext";
 
 const CompleteProfile = () => {
   const [name, setName] = useState("");
@@ -9,6 +10,7 @@ const CompleteProfile = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { setOrder } = useOrder(); // ✅ NEW
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -38,8 +40,18 @@ const CompleteProfile = () => {
         }
       );
 
-      // ✅ NEW — save user data locally
+      // ✅ Save user locally
       localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // ✅ 🔥 MAIN FIX — inject customer into order context
+      setOrder((prev) => ({
+        ...prev,
+        customer: {
+          name,
+          phone,
+          address,
+        },
+      }));
 
       alert("Profile saved successfully!");
       navigate("/welcome");
