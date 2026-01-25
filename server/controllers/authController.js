@@ -23,7 +23,8 @@ export const signup = async (req, res) => {
 
       const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-      await sendMagicLink(email, magicLink);
+      // Fire-and-forget email sending
+      sendMagicLink(email, magicLink).catch(err => console.error("Signup email failed:", err));
 
       return res.json({ message: "Verification link sent" });
     }
@@ -48,7 +49,8 @@ export const signup = async (req, res) => {
 
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-    await sendMagicLink(email, magicLink);
+    // Fire-and-forget email sending
+    sendMagicLink(email, magicLink).catch(err => console.error("Signup email failed:", err));
 
     res.json({ message: "Verification link sent" });
   } catch (err) {
@@ -141,11 +143,8 @@ export const sendMagicLinkForLogin = async (req, res) => {
 
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-    await sendMagicLink(
-      email,
-      magicLink,
-      "Login to Sandy's Sweet Nest"
-    );
+    // Fire-and-forget email sending
+    sendMagicLink(email, magicLink, "Login to Sandy's Sweet Nest").catch(err => console.error("Login email failed:", err));
 
     res.json({ message: "Magic link sent to your email" });
   } catch (error) {
