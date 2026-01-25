@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useOrder } from "../../context/OrderContext.jsx";
+import { useOrder } from "../../context/OrderContext";
 
 const CompleteProfile = () => {
   const [name, setName] = useState("");
@@ -30,18 +30,14 @@ const CompleteProfile = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(
-        "http://localhost:5000/api/profile/complete",
-        { name, phone, address },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axiosInstance.post("/profile/complete", {
+        name,
+        phone,
+        address,
+      });
 
       // ✅ Save user locally
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("user", JSON.stringify({ name, phone, address, profileCompleted: true }));
 
       // ✅ 🔥 MAIN FIX — inject customer into order context
       setOrder((prev) => ({
