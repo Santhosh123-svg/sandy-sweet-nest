@@ -32,6 +32,7 @@ app.use("/orders", orderRoutes);
 // Serve frontend
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
+// 🟢 IMPORTANT: this fallback must be AFTER all API routes
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });

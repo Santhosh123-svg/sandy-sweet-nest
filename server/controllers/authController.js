@@ -26,13 +26,10 @@ export const signup = async (req, res) => {
   try {
     const exists = await User.findOne({ email });
 
-    // If user exists but not verified
     if (exists && !exists.profileCompleted) {
-      const token = jwt.sign(
-        { id: exists._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "15m" }
-      );
+      const token = jwt.sign({ id: exists._id }, process.env.JWT_SECRET, {
+        expiresIn: "15m",
+      });
 
       const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
@@ -46,7 +43,6 @@ export const signup = async (req, res) => {
       return res.json({ message: "Verification link sent" });
     }
 
-    // Already verified user
     if (exists) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -61,11 +57,9 @@ export const signup = async (req, res) => {
       profileCompleted: false,
     });
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "15m",
+    });
 
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
@@ -77,7 +71,6 @@ export const signup = async (req, res) => {
     });
 
     res.json({ message: "Verification link sent" });
-
   } catch (err) {
     console.error("Signup error:", err);
     res.status(500).json({ message: "Signup failed" });
@@ -97,7 +90,6 @@ export const verifyMagicLink = async (req, res) => {
     if (!user)
       return res.status(400).json({ message: "Invalid token" });
 
-    // ✅ mark verified
     user.profileCompleted = true;
     await user.save();
 
