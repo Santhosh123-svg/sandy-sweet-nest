@@ -6,5 +6,8 @@
     "install-all": "npm install && cd server && npm install && cd ../client && npm install && cd ..",
     "build": "cd client && npm run build && cd ..",
     "start": "cd server && npm start"
+  },
+  "dependencies": {
+    "brevo": "^1.0.0"
   }
 }
