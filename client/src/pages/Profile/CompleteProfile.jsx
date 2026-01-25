@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useOrder } from "../context/OrderContext";
+import { useOrder } from "../../context/OrderContext.jsx";
 
 const CompleteProfile = () => {
   const [name, setName] = useState("");
