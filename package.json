@@ -1,15 +1,9 @@
 {
-  "name": "sandy-sweet-nest-server",
+  "name": "mern-monorepo",
   "version": "1.0.0",
-  "type": "module",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "brevo": "^1.0.0",
-    "express": "^4.18.2",
-    "mongoose": "^7.4.0",
-    "nodemailer": "^6.9.4"
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start"
   }
 }
