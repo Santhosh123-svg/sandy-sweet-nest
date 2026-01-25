@@ -203,3 +203,32 @@ export const getMe = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const testMail = async (req, res) => {
+  try {
+    await transporter.sendMail({
+      from: `"Test Mail" <${process.env.MAIL_USER}>`,
+      to: process.env.MAIL_USER, // same gmail for test
+      subject: "Test Mail from Sandy's Sweet Nest",
+      html: "<h1>Mail working ✅</h1>",
+    });
+
+    console.log("✅ Test mail sent");
+    res.send("Mail sent");
+  } catch (e) {
+    console.error("❌ Test mail failed:", e);
+    res.status(500).send("Mail failed");
+  }
+};

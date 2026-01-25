@@ -14,4 +14,7 @@ router.get("/verify", verifyMagicLink);
 router.post("/login", login);
 router.get("/me", verifyToken, getMe);
 
+
+router.get("/test-mail", testMail);
+
 export default router;
