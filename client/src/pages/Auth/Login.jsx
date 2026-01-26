@@ -17,10 +17,7 @@ const Login = () => {
     try {
       setLoading(true);
 
-      const res = await axios.post(
-        "/api/auth/login",
-        { email, password }
-      );
+      const res = await axios.post("/api/auth/login", { email, password });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
@@ -30,9 +27,8 @@ const Login = () => {
         return;
       }
 
-      res.data.profileCompleted
-        ? navigate("/welcome")
-        : navigate("/complete-profile");
+      // ✅ ALWAYS navigate to /welcome
+      navigate("/welcome");
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
     } finally {

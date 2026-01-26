@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 
 const Signup = () => {
@@ -54,6 +55,17 @@ const Signup = () => {
         >
           Register & Get Magic Link
         </button>
+
+        {/* ✅ Login option */}
+        <p className="text-sm text-center mt-4 text-gray-600">
+          Already have an account?{" "}
+          <Link
+            to="/"
+            className="text-amber-600 font-semibold hover:underline"
+          >
+            Login here
+          </Link>
+        </p>
       </div>
     </div>
   );

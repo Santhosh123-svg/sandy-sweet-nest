@@ -32,56 +32,55 @@ const WhatsAppConfirm = () => {
 🎂 ORDER CONFIRMED – Sandy Sweet Nest
 
 Product: ${order.productName}
-Flavor: ${order.flavor || "-"}
 Quantity: ${order.quantity}
 Amount: ₹${order.totalAmount}
 
-Delivery Date: ${order.cakeInfo?.deliveryDate || "-"}
-Preferred Time: ${order.cakeInfo?.preferredTime || "-"}
+Flavor: ${order.flavor || "-"}
+Size: ${order.size || "-"}
+Shape: ${order.shape || "-"}
+Toppings: ${order.toppings?.length ? order.toppings.map(t => t.name).join(", ") : "-"}
 
-👤 Your Details
-Name: ${order.customer?.name}
-Phone: ${order.customer?.phone}
-Address: ${order.customer?.address}
+👤 Customer Details
+Name: ${order.customerInfo?.name || "-"}
+Phone: ${order.customerInfo?.phone || "-"}
+Address: ${order.customerInfo?.address || "-"}
 
 Thank you for ordering with us ❤️
 `;
 
       // 🚨 ADMIN MESSAGE
       const adminMsg = `
-🚨 NEW CAKE ORDER
+🚨 NEW ORDER
 
 Product: ${order.productName}
-Flavor: ${order.flavor || "-"}
-Qty: ${order.quantity}
+Quantity: ${order.quantity}
 Amount: ₹${order.totalAmount}
 
-Delivery Date: ${order.cakeInfo?.deliveryDate || "-"}
-Preferred Time: ${order.cakeInfo?.preferredTime || "-"}
+Flavor: ${order.flavor || "-"}
+Size: ${order.size || "-"}
+Shape: ${order.shape || "-"}
+Toppings: ${order.toppings?.length ? order.toppings.map(t => t.name).join(", ") : "-"}
 
-👤 CUSTOMER DETAILS
-Name: ${order.customer?.name}
-Phone: ${order.customer?.phone}
-Address: ${order.customer?.address}
+👤 Customer Details
+Name: ${order.customerInfo?.name || "-"}
+Phone: ${order.customerInfo?.phone || "-"}
+Address: ${order.customerInfo?.address || "-"}
 `;
 
-      // ✅ Open WhatsApp BEFORE navigating to success page for better mobile support
+      // ✅ Open WhatsApp BEFORE navigating to success page
       const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
       if (isMobile) {
-        // On mobile, use window.open with _blank for better app opening
         const whatsappWindow = window.open(
           `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(adminMsg)}`,
           "_blank"
         );
-        // Fallback for Android if window.open is blocked
         if (!whatsappWindow) {
           window.location.href = `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(adminMsg)}`;
         }
       } else {
-        // On desktop, use window.open
         window.open(
-          `https://wa.me/${order.customer?.phone}?text=${encodeURIComponent(customerMsg)}`,
+          `https://wa.me/${order.customerInfo?.phone}?text=${encodeURIComponent(customerMsg)}`,
           "_blank"
         );
         window.open(
@@ -90,9 +89,7 @@ Address: ${order.customer?.address}
         );
       }
 
-      // ✅ THEN navigate to success page
       navigate("/order-success");
-
     } catch (error) {
       console.log(error);
       alert("Order failed! Please try again.");
