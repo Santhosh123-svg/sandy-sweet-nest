@@ -40,6 +40,13 @@ Size: ${order.size || "-"}
 Shape: ${order.shape || "-"}
 Toppings: ${order.toppings?.length ? order.toppings.map(t => t.name).join(", ") : "-"}
 
+📌 Delivery:
+Date: ${order.cakeInfo?.deliveryDate || "-"}
+Time: ${order.cakeInfo?.preferredTime || "-"}
+
+🎁 Purpose: ${order.cakeInfo?.purpose || "-"}
+✍ Text on Cake: ${order.cakeInfo?.cakeText || "-"}
+
 👤 Customer Details
 Name: ${order.customerInfo?.name || "-"}
 Phone: ${order.customerInfo?.phone || "-"}
@@ -60,6 +67,13 @@ Flavor: ${order.flavor || "-"}
 Size: ${order.size || "-"}
 Shape: ${order.shape || "-"}
 Toppings: ${order.toppings?.length ? order.toppings.map(t => t.name).join(", ") : "-"}
+
+📌 Delivery:
+Date: ${order.cakeInfo?.deliveryDate || "-"}
+Time: ${order.cakeInfo?.preferredTime || "-"}
+
+🎁 Purpose: ${order.cakeInfo?.purpose || "-"}
+✍ Text on Cake: ${order.cakeInfo?.cakeText || "-"}
 
 👤 Customer Details
 Name: ${order.customerInfo?.name || "-"}
