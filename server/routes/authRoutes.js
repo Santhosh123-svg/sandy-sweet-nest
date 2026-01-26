@@ -4,7 +4,6 @@ import {
   verifyMagicLink,
   login,
   getMe,
-  testMail,
   sendMagicLinkForLogin,
 } from "../controllers/authController.js";
 
@@ -17,8 +16,5 @@ router.get("/magic-verify", verifyMagicLink);
 router.post("/login", login);
 router.post("/magic/send-link", sendMagicLinkForLogin);
 router.get("/me", verifyToken, getMe);
-
-// ✅ TEST MAIL ROUTE
-router.get("/test-mail", testMail);
 
 export default router;
