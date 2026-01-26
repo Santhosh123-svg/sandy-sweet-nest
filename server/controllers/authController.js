@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import transporter, { sendMagicLink } from "../utils/sendEmail.js";
+import { sendMagicLink } from "../utils/sendEmail.js";
 
 dotenv.config();
 
@@ -197,17 +197,18 @@ export const getMe = async (req, res) => {
 ========================= */
 export const testMail = async (req, res) => {
   try {
-    await transporter.sendMail({
-      from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
-      to: process.env.MAIL_USER,
-      subject: "Test Mail ✅",
-      html: "<h1>Mail system working perfectly 🔥</h1>",
-    });
+    const testLink = `${process.env.CLIENT_URL}/magic-verify?token=test-token`;
+
+    await sendMagicLink(process.env.MAIL_USER, testLink);
 
     console.log("✅ Test mail sent");
     res.json({ success: true, message: "Mail sent successfully" });
   } catch (e) {
     console.error("❌ Test mail failed:", e);
-    res.status(500).json({ success: false, message: "Mail failed", error: e.message });
+    res.status(500).json({
+      success: false,
+      message: "Mail failed",
+      error: e.message,
+    });
   }
 };
