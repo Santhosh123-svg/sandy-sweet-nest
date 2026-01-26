@@ -6,7 +6,7 @@ const verifyToken = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "No token" });
+      return res.status(401).json({ message: "No token provided" });
     }
 
     const token = authHeader.split(" ")[1];
@@ -15,7 +15,7 @@ const verifyToken = async (req, res, next) => {
     req.user = await User.findById(decoded.id).select("-password");
     next();
   } catch (error) {
-    console.error("AUTH ERROR 👉", error);
+    console.error("AUTH ERROR 👉", error.message);
     res.status(401).json({ message: "Invalid token" });
   }
 };
