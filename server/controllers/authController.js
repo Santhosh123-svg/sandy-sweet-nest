@@ -23,8 +23,14 @@ export const signup = async (req, res) => {
 
       const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-      // Fire-and-forget email sending
-      sendMagicLink(email, magicLink).catch(err => console.error("Signup email failed:", err));
+      // Send email and handle errors
+      try {
+        await sendMagicLink(email, magicLink);
+        console.log("✅ Signup magic link sent successfully");
+      } catch (err) {
+        console.error("❌ Signup email failed:", err.message);
+        return res.status(500).json({ message: "Failed to send verification email" });
+      }
 
       return res.json({ message: "Verification link sent" });
     }
@@ -49,8 +55,14 @@ export const signup = async (req, res) => {
 
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-    // Fire-and-forget email sending
-    sendMagicLink(email, magicLink).catch(err => console.error("Signup email failed:", err));
+    // Send email and handle errors
+    try {
+      await sendMagicLink(email, magicLink);
+      console.log("✅ New user signup magic link sent successfully");
+    } catch (err) {
+      console.error("❌ New user signup email failed:", err.message);
+      return res.status(500).json({ message: "Failed to send verification email" });
+    }
 
     res.json({ message: "Verification link sent" });
   } catch (err) {
@@ -143,8 +155,14 @@ export const sendMagicLinkForLogin = async (req, res) => {
 
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-    // Fire-and-forget email sending
-    sendMagicLink(email, magicLink, "Login to Sandy's Sweet Nest").catch(err => console.error("Login email failed:", err));
+    // Send email and handle errors
+    try {
+      await sendMagicLink(email, magicLink);
+      console.log("✅ Login magic link sent successfully");
+    } catch (err) {
+      console.error("❌ Login email failed:", err.message);
+      return res.status(500).json({ message: "Failed to send magic link" });
+    }
 
     res.json({ message: "Magic link sent to your email" });
   } catch (error) {
@@ -180,9 +198,9 @@ export const getMe = async (req, res) => {
 export const testMail = async (req, res) => {
   try {
     await transporter.sendMail({
-      from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_FROM}>`,
-      to: process.env.MAIL_FROM,
-      subject: "Brevo Test Mail ✅",
+      from: `"Sandy's Sweet Nest 🍰" <${process.env.MAIL_USER}>`,
+      to: process.env.MAIL_USER,
+      subject: "Test Mail ✅",
       html: "<h1>Mail system working perfectly 🔥</h1>",
     });
 
@@ -190,6 +208,6 @@ export const testMail = async (req, res) => {
     res.json({ success: true, message: "Mail sent successfully" });
   } catch (e) {
     console.error("❌ Test mail failed:", e);
-    res.status(500).json({ success: false, message: "Mail failed" });
+    res.status(500).json({ success: false, message: "Mail failed", error: e.message });
   }
 };
