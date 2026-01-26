@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axiosInstance from "../../utils/axiosInstance";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useOrder } from "../../context/OrderContext";
 
 const CompleteProfile = () => {
@@ -9,50 +9,51 @@ const CompleteProfile = () => {
   const [address, setAddress] = useState("");
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const { setOrder } = useOrder(); // ✅ NEW
+  const { setOrder } = useOrder();
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const urlToken = params.get("token");
-
-    if (urlToken) {
-      localStorage.setItem("token", urlToken);
-    }
-
-    const savedToken = localStorage.getItem("token");
-    if (!savedToken) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       navigate("/login");
     }
-  }, [location, navigate]);
+  }, [navigate]);
 
   const handleSave = async () => {
-    try {
-      const token = localStorage.getItem("token");
+    // 🔴 VALIDATION
+    if (!name || !phone || !address) {
+      alert("All fields are required");
+      return;
+    }
 
+    try {
       const res = await axiosInstance.post("/profile/complete", {
         name,
         phone,
         address,
       });
 
-      // ✅ Save user locally
-      localStorage.setItem("user", JSON.stringify({ name, phone, address, profileCompleted: true }));
-
-      // ✅ 🔥 MAIN FIX — inject customer into order context
-      setOrder((prev) => ({
-        ...prev,
-        customer: {
+      // ✅ SAVE USER LOCALLY
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
           name,
           phone,
           address,
-        },
+          profileCompleted: true,
+        })
+      );
+
+      // ✅ SAVE CUSTOMER IN ORDER CONTEXT
+      setOrder((prev) => ({
+        ...prev,
+        customer: { name, phone, address },
       }));
 
       alert("Profile saved successfully!");
       navigate("/welcome");
     } catch (err) {
-      alert(err.response?.data?.message || "Save failed");
+      console.error(err);
+      alert(err.response?.data?.message || "Profile save failed");
     }
   };
 
@@ -67,6 +68,7 @@ const CompleteProfile = () => {
           type="text"
           placeholder="Name"
           className="w-full border p-2 rounded mb-3"
+          value={name}
           onChange={(e) => setName(e.target.value)}
         />
 
@@ -74,6 +76,7 @@ const CompleteProfile = () => {
           type="text"
           placeholder="Phone"
           className="w-full border p-2 rounded mb-3"
+          value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
 
@@ -81,6 +84,7 @@ const CompleteProfile = () => {
           type="text"
           placeholder="Address"
           className="w-full border p-2 rounded mb-3"
+          value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
 
