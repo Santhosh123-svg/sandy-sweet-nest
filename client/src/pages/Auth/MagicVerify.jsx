@@ -9,7 +9,7 @@ const MagicVerify = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const { data } = await axiosInstance.get(`/auth/verify${search}`);
+        const { data } = await axiosInstance.get(`/auth/magic-verify${search}`);
 
         localStorage.setItem("token", data.token);
 

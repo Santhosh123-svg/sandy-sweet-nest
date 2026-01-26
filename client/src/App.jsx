@@ -31,7 +31,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/verify" element={<Verify />} />
+          <Route path="/magic-verify" element={<Verify />} />
           <Route path="/complete-profile" element={<CompleteProfile />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/admin" element={<AdminDashboard />} />

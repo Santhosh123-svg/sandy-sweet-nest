@@ -13,7 +13,7 @@ import verifyToken from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/signup", signup);
-router.get("/verify", verifyMagicLink);
+router.get("/magic-verify", verifyMagicLink);
 router.post("/login", login);
 router.post("/magic/send-link", sendMagicLinkForLogin);
 router.get("/me", verifyToken, getMe);
