@@ -9,7 +9,7 @@ const Signup = () => {
 
   const handleSignup = async () => {
     try {
-      const res = await axiosInstance.post("/auth/signup", {
+      const res = await axiosInstance.post("/api/auth/signup", {
         name,
         email,
         password,
