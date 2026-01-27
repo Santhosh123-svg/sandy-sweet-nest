@@ -9,6 +9,7 @@ import profileRoutes from "./routes/profileRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
+import { verifyMagicLink } from "./controllers/authController.js"; // Import for direct /magic-verify route
 
 dotenv.config();
 const app = express();
@@ -22,6 +23,9 @@ app.use(
 );
 
 app.use(express.json());
+
+// Direct route for /magic-verify to make it accessible without /api prefix
+app.get("/magic-verify", verifyMagicLink);
 
 /* ✅ API Routes */
 app.use("/api/auth", authRoutes);
