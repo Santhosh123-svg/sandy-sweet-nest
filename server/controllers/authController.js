@@ -35,7 +35,7 @@ export const signup = async (req, res) => {
       { expiresIn: "15m" }
     );
 
-    const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
+    const magicLink = `https://sandy-sweet-nest-2.onrender.com/magic-verify?token=${token}`;
 
     await sendMagicLink(email, magicLink);
 
@@ -60,18 +60,8 @@ export const verifyMagicLink = async (req, res) => {
       return res.status(400).json({ message: "Invalid token" });
     }
 
-    // 🔥 IMPORTANT: profileCompleted = false ONLY
-    const authToken = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.json({
-      token: authToken,
-      profileCompleted: user.profileCompleted, // false → go to complete-profile
-      email: user.email,
-    });
+    // Redirect to client with the token
+    res.redirect(`https://sandy-sweet-nest-3.onrender.com/magic-verify?token=${token}`);
   } catch (err) {
     res.status(400).json({ message: "Invalid or expired token" });
   }
@@ -125,7 +115,7 @@ export const sendMagicLinkForLogin = async (req, res) => {
       { expiresIn: "15m" }
     );
 
-    const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
+    const magicLink = `https://sandy-sweet-nest-2.onrender.com/magic-verify?token=${token}`;
     await sendMagicLink(email, magicLink);
 
     res.json({ message: "Magic link sent" });

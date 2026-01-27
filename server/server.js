@@ -14,13 +14,8 @@ import { verifyMagicLink } from "./controllers/authController.js"; // Import for
 dotenv.config();
 const app = express();
 
-/* ✅ CORS – FIXED */
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  })
-);
+app.use(cors({ origin: true, credentials: true }));
+
 
 app.use(express.json());
 
