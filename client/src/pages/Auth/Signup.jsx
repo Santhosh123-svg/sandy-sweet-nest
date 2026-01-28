@@ -6,22 +6,32 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  
   const handleSignup = async () => {
-    if (!name || !email || !password) {
-      alert("Please fill all fields");
-      return;
-    }
-    try {
-      setLoading(true);
-      const res = await axiosInstance.post("/api/auth/signup", { name, email, password });
+  if (!name || !email || !password) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    // Explicit full path matches backend mounting (/api/auth/signup)
+    const res = await axiosInstance.post("/api/auth/signup", { name, email, password });
+    
+    if (res.data.success) {
       alert(res.data.message);
-    } catch (err) {
-      console.error("Signup error:", err.response || err);
-      alert(err.response?.data?.message || "Server Error. Please try again.");
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (err) {
+    console.error("Signup process failed:", err.response?.data || err.message);
+    
+    // Display the specific error message from the backend (400, 409, or 500)
+    const errorMessage = err.response?.data?.message || "Connection error. Please try again.";
+    alert(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-amber-50">
       <div className="bg-white p-6 rounded-2xl shadow-lg w-80">
