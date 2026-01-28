@@ -11,23 +11,26 @@ const MagicVerify = () => {
       try {
         const { data } = await axiosInstance.get(`/magic-verify${search}`);
 
+        // save token
         localStorage.setItem("token", data.token);
 
-        if (!data.profileCompleted) {
-          navigate("/complete-profile");
-        } else {
-          navigate("/welcome");
-        }
+        // since complete-profile page is removed
+        // go to login page first
+        navigate("/");
       } catch (err) {
         alert(err.response?.data?.message || "Invalid or expired link");
-        navigate("/login");
+        navigate("/");
       }
     };
 
     verify();
   }, [navigate, search]);
 
-  return <div className="text-center mt-10">Verifying magic link…</div>;
+  return (
+    <div className="text-center mt-10 text-lg font-medium">
+      Verifying magic link…
+    </div>
+  );
 };
 
 export default MagicVerify;
