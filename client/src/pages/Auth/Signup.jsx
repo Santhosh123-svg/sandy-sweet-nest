@@ -9,21 +9,23 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!name || !email || !password) {
-      alert("Fill all fields");
-      return;
-    }
+  if (!name || !email || !password) {
+    alert("Please fill all fields");
+    return;
+  }
 
-    try {
-      setLoading(true);
-      const res = await axiosInstance.post("/api/auth/signup", { name, email, password });
-      alert(res.data.message || "Magic link sent to your email");
-    } catch (err) {
-      alert(err.response?.data?.message || "Signup failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    // Path must match server.js mounting (/api/auth) + route path (/signup)
+    const res = await axiosInstance.post("/api/auth/signup", { name, email, password });
+    alert(res.data.message || "Magic link sent to your email!");
+  } catch (err) {
+    console.error("Signup Error:", err);
+    alert(err.response?.data?.message || "Connection failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-amber-50">
