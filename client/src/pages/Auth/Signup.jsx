@@ -36,18 +36,21 @@ const Signup = () => {
           type="text"
           placeholder="Name"
           className="w-full border p-2 rounded mb-3"
+          value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <input
           type="email"
           placeholder="Email"
           className="w-full border p-2 rounded mb-3"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
           className="w-full border p-2 rounded mb-4"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
