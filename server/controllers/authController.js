@@ -13,13 +13,18 @@ export const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // 1. Check if user already exists
-    const exists = await User.findOne({ email });
-    if (exists) {
-      return res.status(400).json({ message: "User already exists" });
+    // 1. Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    // 2. Hash password and Save to MongoDB
+    // 2. Check if user already exists
+    const exists = await User.findOne({ email });
+    if (exists) {
+      return res.status(400).json({ message: "Email already registered. Please login." });
+    }
+
+    // 3. Create user in MongoDB
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({
       name,
@@ -29,24 +34,23 @@ export const signup = async (req, res) => {
       profileCompleted: false,
     });
 
-    // 3. Generate Magic Link Token
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
-
-    // 4. Construct URL using environment variable
+    // 4. Generate Magic Link
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
-    // 5. Send Email and await response
+    // 5. Send Email
     await sendMagicLink(email, magicLink);
 
-    // 6. Return success response
-    res.json({ message: "Verification link sent" });
+    // 6. Success Response
+    return res.status(201).json({ message: "Registration successful. Magic link sent!" });
+
   } catch (err) {
     console.error("SIGNUP ERROR:", err);
-    res.status(500).json({ message: "Signup failed" });
+    // Ensure we return JSON so frontend doesn't get a blank 500
+    return res.status(500).json({ 
+      message: "Server error during signup", 
+      error: err.message 
+    });
   }
 };
 /* =========================

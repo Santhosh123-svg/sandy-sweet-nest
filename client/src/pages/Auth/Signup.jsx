@@ -10,18 +10,18 @@ const Signup = () => {
 
   const handleSignup = async () => {
   if (!name || !email || !password) {
-    alert("Please fill all fields");
+    alert("Fill all fields");
     return;
   }
 
   try {
     setLoading(true);
-    // Path must match server.js mounting (/api/auth) + route path (/signup)
+    // Explicit full path starting with /api/auth
     const res = await axiosInstance.post("/api/auth/signup", { name, email, password });
     alert(res.data.message || "Magic link sent to your email!");
   } catch (err) {
-    console.error("Signup Error:", err);
-    alert(err.response?.data?.message || "Connection failed. Please try again.");
+    console.error("Signup failed:", err);
+    alert(err.response?.data?.message || "Internal Server Error. Please try again later.");
   } finally {
     setLoading(false);
   }
