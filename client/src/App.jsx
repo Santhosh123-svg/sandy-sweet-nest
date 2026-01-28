@@ -28,8 +28,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/magic-verify" element={<Verify />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/admin" element={<AdminDashboard />} />

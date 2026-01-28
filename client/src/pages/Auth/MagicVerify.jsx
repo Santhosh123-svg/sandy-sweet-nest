@@ -9,17 +9,19 @@ const MagicVerify = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const { data } = await axiosInstance.get(`/magic-verify${search}`);
+        const { data } = await axiosInstance.get(
+          `/auth/magic/verify${search}`,
+          {
+            headers: { Authorization: "" },
+          }
+        );
 
-        // save token
         localStorage.setItem("token", data.token);
 
-        // since complete-profile page is removed
-        // go to login page first
-        navigate("/");
+        // ✅ AFTER VERIFY → LOGIN PAGE
+        navigate("/login");
       } catch (err) {
-        alert(err.response?.data?.message || "Invalid or expired link");
-        navigate("/");
+        navigate("/login");
       }
     };
 
