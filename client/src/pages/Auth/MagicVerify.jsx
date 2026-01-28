@@ -9,19 +9,16 @@ const MagicVerify = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const { data } = await axiosInstance.get(
-          `/auth/magic/verify${search}`,
-          {
-            headers: { Authorization: "" },
-          }
-        );
+        const { data } = await axiosInstance.get(`/auth/magic/verify${search}`, {
+          headers: { Authorization: "" }, // no token
+        });
 
         localStorage.setItem("token", data.token);
 
-        // ✅ AFTER VERIFY → LOGIN PAGE
-        navigate("/login");
-      } catch (err) {
-        navigate("/login");
+        // ✅ redirect login page
+        navigate("/login", { replace: true });
+      } catch {
+        navigate("/login", { replace: true });
       }
     };
 

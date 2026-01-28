@@ -3,13 +3,22 @@ import axiosInstance from "../../utils/axiosInstance";
 
 const MagicLink = () => {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const sendLink = async () => {
+    if (!email) {
+      alert("Enter your email first");
+      return;
+    }
+
     try {
+      setLoading(true);
       const res = await axiosInstance.post("/auth/magic/send-link", { email });
       alert(res.data.message || "Magic link sent to your email");
     } catch (err) {
       alert(err.response?.data?.message || "Failed to send link");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -28,10 +37,13 @@ const MagicLink = () => {
         />
 
         <button
-          className="w-full p-3 rounded-xl bg-amber-300"
+          className={`w-full p-3 rounded-xl bg-amber-300 ${
+            loading ? "cursor-not-allowed opacity-70" : ""
+          }`}
           onClick={sendLink}
+          disabled={loading}
         >
-          Send Magic Link
+          {loading ? "Sending..." : "Send Magic Link"}
         </button>
       </div>
     </div>
