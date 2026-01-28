@@ -13,14 +13,14 @@ export const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
+    // 1. Check if user already exists
     const exists = await User.findOne({ email });
-
     if (exists) {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    // 2. Hash password and Save to MongoDB
     const hashed = await bcrypt.hash(password, 10);
-
     const user = await User.create({
       name,
       email,
@@ -29,23 +29,26 @@ export const signup = async (req, res) => {
       profileCompleted: false,
     });
 
+    // 3. Generate Magic Link Token
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
 
-    const magicLink = `https://sandy-sweet-nest-2.onrender.com/magic-verify?token=${token}`;
+    // 4. Construct URL using environment variable
+    const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
 
+    // 5. Send Email and await response
     await sendMagicLink(email, magicLink);
 
+    // 6. Return success response
     res.json({ message: "Verification link sent" });
   } catch (err) {
-    console.error("Signup error:", err);
+    console.error("SIGNUP ERROR:", err);
     res.status(500).json({ message: "Signup failed" });
   }
 };
-
 /* =========================
    MAGIC VERIFY (❗ DO NOT COMPLETE PROFILE HERE)
 ========================= */
