@@ -16,12 +16,7 @@ const Signup = () => {
 
     try {
       setLoading(true);
-      const res = await axiosInstance.post("/api/auth/signup", {
-        name,
-        email,
-        password,
-      });
-
+      const res = await axiosInstance.post("/api/auth/signup", { name, email, password });
       alert(res.data.message || "Magic link sent to your email");
     } catch (err) {
       alert(err.response?.data?.message || "Signup failed");

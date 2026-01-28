@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,19 +16,12 @@ const Login = () => {
 
     try {
       setLoading(true);
-
-      const res = await axios.post("/api/auth/login", { email, password });
+      const res = await axiosInstance.post("/api/auth/login", { email, password });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
 
-      if (res.data.role === "admin") {
-        navigate("/admin");
-        return;
-      }
-
-      // ✅ ALWAYS navigate to /welcome
-      navigate("/welcome");
+      navigate(res.data.role === "admin" ? "/admin" : "/welcome");
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
     } finally {
@@ -61,12 +54,9 @@ const Login = () => {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className={`w-full py-3 rounded-lg font-semibold text-white transition
-              ${
-                loading
-                  ? "bg-amber-300 cursor-not-allowed"
-                  : "bg-amber-500 hover:bg-amber-600"
-              }`}
+            className={`w-full py-3 rounded-lg font-semibold text-white transition ${
+              loading ? "bg-amber-300 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-600"
+            }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
@@ -74,10 +64,7 @@ const Login = () => {
 
         <p className="text-sm text-center mt-6 text-gray-600">
           New user?{" "}
-          <Link
-            to="/signup"
-            className="text-amber-600 font-semibold hover:underline"
-          >
+          <Link to="/signup" className="text-amber-600 font-semibold hover:underline">
             Register here
           </Link>
         </p>

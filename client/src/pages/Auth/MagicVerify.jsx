@@ -14,8 +14,6 @@ const MagicVerify = () => {
         });
 
         localStorage.setItem("token", data.token);
-
-        // ✅ redirect login page
         navigate("/login", { replace: true });
       } catch {
         navigate("/login", { replace: true });
