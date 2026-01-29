@@ -50,6 +50,8 @@ const Payment = () => {
       const updatedOrder = {
         ...order,
         orderId: orderId,
+        deliveryDate: order.cakeInfo?.deliveryDate || "",
+        deliveryTime: order.cakeInfo?.preferredTime || "",
       };
       
       placeOrder(updatedOrder);

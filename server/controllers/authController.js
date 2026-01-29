@@ -73,6 +73,12 @@ export const login = async (req, res) => {
         success: true,
         token,
         role: "admin",
+        user: {
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          address: user.address,
+        },
       });
     }
 
@@ -94,7 +100,12 @@ export const login = async (req, res) => {
       token,
       role: user.role,
       profileCompleted: user.profileCompleted,
-      name: user.name,
+      user: {
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+      },
     });
   } catch (err) {
     res.status(500).json({ message: "Login failed" });

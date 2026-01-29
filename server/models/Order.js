@@ -10,7 +10,10 @@ const orderSchema = new mongoose.Schema(
     category: String,
     quantity: Number,
     totalAmount: Number,
-    
+
+    deliveryDate: String,
+    deliveryTime: String,
+
     // Cake Specific Info
     cakeInfo: {
       deliveryDate: String,

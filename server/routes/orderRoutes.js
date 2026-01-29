@@ -16,6 +16,8 @@ router.post("/", protect, async (req, res) => {
       category, 
       quantity, 
       totalAmount, 
+      deliveryDate,
+      deliveryTime,
       cakeInfo, 
       customer 
     } = req.body;
@@ -30,6 +32,8 @@ router.post("/", protect, async (req, res) => {
       category,
       quantity,
       totalAmount,
+      deliveryDate,
+      deliveryTime,
       cakeInfo,
       customer
     });

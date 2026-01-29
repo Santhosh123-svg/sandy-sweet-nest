@@ -66,7 +66,8 @@ const CompleteProfile = () => {
       
       if (res.data.success) {
         localStorage.setItem("profileCompleted", "true");
-        if (res.data.user?.name) {
+        if (res.data.user) {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
           localStorage.setItem("signupName", res.data.user.name);
         }
         alert(res.data.message || "Profile updated successfully!");

@@ -135,8 +135,8 @@ const AdminDashboard = () => {
                 <div className="space-y-1">
                   <h3 className="text-xs font-black text-blue-500 uppercase tracking-widest">Delivery Info</h3>
                   <div className="bg-blue-50/50 p-3 rounded-2xl text-sm border border-blue-100">
-                    <p>📅 <span className="font-bold text-blue-700">{order.cakeInfo?.deliveryDate || "N/A"}</span></p>
-                    <p>⏰ <span className="font-bold text-blue-700">{order.cakeInfo?.preferredTime || "N/A"}</span></p>
+                    <p>📅 <span className="font-bold text-blue-700">{order.deliveryDate || order.cakeInfo?.deliveryDate || "N/A"}</span></p>
+                    <p>⏰ <span className="font-bold text-blue-700">{order.deliveryTime || order.cakeInfo?.preferredTime || "N/A"}</span></p>
                   </div>
                 </div>
               </div>
