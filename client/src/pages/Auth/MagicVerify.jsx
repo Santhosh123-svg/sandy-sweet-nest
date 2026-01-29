@@ -9,29 +9,25 @@ const MagicVerify = () => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      // search contains "?token=XXXX"
       if (!search) {
         setError("Missing token in URL.");
         return;
       }
 
       try {
-        // Full Path: https://sandy-sweet-nest-2.onrender.com/api/auth/magic-verify?token=XXXX
         const { data } = await axiosInstance.get(`/api/auth/magic-verify${search}`);
 
-        if (data.token) {
+        if (data.success && data.token) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("role", data.role || "user");
+          
+          // Success -> Go to welcome or dashboard
+          navigate("/welcome", { replace: true });
         }
-
-        // ✅ Success -> Go to login or welcome
-        // User requested: Redirect to /login
-        navigate("/login", { replace: true });
       } catch (err) {
         console.error("Verification failed:", err);
         setError(err.response?.data?.message || "Invalid or expired magic link.");
         
-        // Optional: auto-redirect to login after 3 seconds on failure
         setTimeout(() => navigate("/login"), 3000);
       }
     };
