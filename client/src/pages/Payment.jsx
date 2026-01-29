@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { QrCode, Smartphone, ArrowLeft, Loader2, X } from "lucide-react";
 import { useOrder } from "../context/OrderContext";
+import axiosInstance from "../utils/axiosInstance";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -36,23 +37,36 @@ const Payment = () => {
     upiLink
   )}`;
 
-  const handlePaid = () => {
+  const handlePaid = async () => {
     if (!orderId.trim()) {
       alert("Please enter your Order ID / Transaction ID to proceed 💳");
       return;
     }
 
-    setVerifying(true);
+    try {
+      setVerifying(true);
 
-    // Save orderId inside order context
-    placeOrder({
-      ...order,
-      orderId: orderId,
-    });
+      // 1. Update Order Context with the Order ID
+      const updatedOrder = {
+        ...order,
+        orderId: orderId,
+      };
+      
+      placeOrder(updatedOrder);
 
-    setTimeout(() => {
-      navigate("/whatsapp-confirm");
-    }, 4000);
+      // 2. Save Order to Database (for Admin Dashboard)
+      // Note: baseURL in axiosInstance is https://.../ , so we use /api/orders
+      await axiosInstance.post("/api/orders", updatedOrder);
+
+      // 3. Success -> Navigate to WhatsApp Confirmation
+      setTimeout(() => {
+        navigate("/whatsapp-confirm");
+      }, 3000);
+    } catch (err) {
+      console.error("ORDER SAVE ERROR 👉", err);
+      alert("Something went wrong while saving your order. Please try again.");
+      setVerifying(false);
+    }
   };
 
   return (

@@ -2,39 +2,38 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    // 🔐 NEW (duplicate prevent)
-    clientOrderId: {
-      type: String,
-      unique: true,
-      sparse: true, // old orders-ku problem varama iruka
-    },
-
     orderId: {
       type: String,
-      default: () => "ORD-" + Date.now(),
+      required: true,
+    },
+    productName: String,
+    category: String,
+    quantity: Number,
+    totalAmount: Number,
+    
+    // Cake Specific Info
+    cakeInfo: {
+      deliveryDate: String,
+      preferredTime: String,
+      purpose: String,
+      cakeText: String,
+      flavor: String,
+      size: String,
+      shape: String,
+      toppings: [String],
     },
 
-    userName: {
+    // Customer Info
+    customer: {
+      name: String,
+      email: String,
+      phone: String,
+      address: String,
+    },
+    
+    status: {
       type: String,
-      default: "Unknown User",
-    },
-
-    userEmail: {
-      type: String,
-      default: "No email",
-    },
-
-    items: [
-      {
-        name: String,
-        quantity: Number,
-        price: Number,
-      },
-    ],
-
-    totalAmount: {
-      type: Number,
-      default: 0,
+      default: "Pending",
     },
   },
   { timestamps: true }
