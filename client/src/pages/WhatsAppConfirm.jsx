@@ -48,9 +48,9 @@ Time: ${order.cakeInfo?.preferredTime || "-"}
 ✍ Text on Cake: ${order.cakeInfo?.cakeText || "-"}
 
 👤 Customer Details
-Name: ${order.customerInfo?.name || "-"}
-Phone: ${order.customerInfo?.phone || "-"}
-Address: ${order.customerInfo?.address || "-"}
+Name: ${order.customer?.name || "-"}
+Phone: ${order.customer?.phone || "-"}
+Address: ${order.customer?.address || "-"}
 
 Thank you for ordering with us ❤️
 `;
@@ -76,9 +76,9 @@ Time: ${order.cakeInfo?.preferredTime || "-"}
 ✍ Text on Cake: ${order.cakeInfo?.cakeText || "-"}
 
 👤 Customer Details
-Name: ${order.customerInfo?.name || "-"}
-Phone: ${order.customerInfo?.phone || "-"}
-Address: ${order.customerInfo?.address || "-"}
+Name: ${order.customer?.name || "-"}
+Phone: ${order.customer?.phone || "-"}
+Address: ${order.customer?.address || "-"}
 `;
 
       // ✅ Open WhatsApp BEFORE navigating to success page
@@ -94,7 +94,7 @@ Address: ${order.customerInfo?.address || "-"}
         }
       } else {
         window.open(
-          `https://wa.me/${order.customerInfo?.phone}?text=${encodeURIComponent(customerMsg)}`,
+          `https://wa.me/${order.customer?.phone}?text=${encodeURIComponent(customerMsg)}`,
           "_blank"
         );
         window.open(
