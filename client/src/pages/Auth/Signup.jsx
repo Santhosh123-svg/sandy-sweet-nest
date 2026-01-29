@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 const Signup = () => {
   const [name, setName] = useState("");
@@ -27,7 +26,6 @@ const Signup = () => {
         <input type="email" placeholder="Email" className="w-full border p-2 rounded mb-3" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="password" placeholder="Password" className="w-full border p-2 rounded mb-4" value={password} onChange={(e) => setPassword(e.target.value)} />
         <button onClick={handleSignup} disabled={loading} className={`w-full bg-amber-500 text-white py-2 rounded font-semibold ${loading ? "opacity-70" : ""}`}>{loading ? "Registering..." : "Register & Get Magic Link"}</button>
-        <p className="text-sm text-center mt-4 text-gray-600">Already have an account? <Link to="/login" className="text-amber-600 font-semibold hover:underline">Login here</Link></p>
       </div>
     </div>
   );
