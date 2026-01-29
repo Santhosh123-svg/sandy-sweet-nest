@@ -84,20 +84,28 @@ export const login = async (req, res) => {
    COMPLETE PROFILE
 ========================= */
 export const completeProfile = async (req, res) => {
-  const { name, phone, address } = req.body;
+  let { name, phone, address } = req.body;
 
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Validation: Name must match registration name
-    if (user.name.toLowerCase() !== name.trim().toLowerCase()) {
-      return res.status(400).json({ 
-        message: "The name you entered does not match your registration name. Please enter the same name as used during signup." 
-      });
+    // Validation: Phone must be numeric
+    if (phone && isNaN(Number(phone))) {
+      return res.status(400).json({ message: "Phone number must be numeric" });
     }
 
-    user.phone = phone;
+    // Validation: Name must match registration name on first submission
+    if (!user.profileCompleted) {
+      if (user.name.toLowerCase() !== name.trim().toLowerCase()) {
+        return res.status(400).json({ 
+          message: "The name you entered does not match your registration name. Please enter the same name as used during signup." 
+        });
+      }
+    }
+
+    user.name = name;
+    user.phone = Number(phone); // Convert to number before saving
     user.address = address;
     user.profileCompleted = true;
 
@@ -106,7 +114,12 @@ export const completeProfile = async (req, res) => {
     res.json({ 
       success: true, 
       message: "Profile updated successfully!",
-      profileCompleted: true 
+      profileCompleted: true,
+      user: {
+        name: user.name,
+        phone: user.phone,
+        address: user.address
+      }
     });
   } catch (err) {
     console.error("Complete Profile Error:", err);

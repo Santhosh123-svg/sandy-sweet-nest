@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiLogOut } from "react-icons/fi";
+import { FiLogOut, FiUser } from "react-icons/fi";
 import { FaInstagram, FaWhatsapp, FaFacebook } from "react-icons/fa";
 
 const Welcome = () => {
@@ -108,6 +108,14 @@ const Welcome = () => {
               >
                 About
               </Link>
+
+              <button
+                onClick={() => navigate("/complete-profile?edit=true")}
+                className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:bg-amber-50 rounded-lg"
+              >
+                <FiUser className="text-xl" />
+                Edit Profile
+              </button>
 
               <button
                 onClick={handleLogout}

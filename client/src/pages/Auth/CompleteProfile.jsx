@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { User, Phone, MapPin, CheckCircle } from "lucide-react";
 
@@ -12,16 +12,34 @@ const CompleteProfile = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Retrieve original signup name from localStorage (saved during login)
+  const isEditMode = location.search.includes("edit=true");
   const signupName = localStorage.getItem("signupName") || "";
 
   useEffect(() => {
-    const profileCompleted = localStorage.getItem("profileCompleted") === "true";
-    if (profileCompleted) {
-      navigate("/welcome");
-    }
-  }, [navigate]);
+    const fetchData = async () => {
+      try {
+        const res = await axiosInstance.get("/api/auth/me");
+        if (res.data) {
+          setFormData({
+            name: res.data.name || "",
+            phone: res.data.phone || "",
+            address: res.data.address || "",
+          });
+
+          // If not in edit mode and profile already completed, redirect to welcome
+          if (!isEditMode && res.data.profileCompleted) {
+            navigate("/welcome");
+          }
+        }
+      } catch (err) {
+        console.error("Fetch profile error:", err);
+      }
+    };
+
+    fetchData();
+  }, [navigate, isEditMode]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,8 +54,8 @@ const CompleteProfile = () => {
       return;
     }
 
-    // Validation: Name must match registration name
-    if (formData.name.toLowerCase() !== signupName.toLowerCase()) {
+    // Validation: Name must match registration name (only on first submission)
+    if (!isEditMode && formData.name.toLowerCase() !== signupName.toLowerCase()) {
       setError("The name you entered does not match your registration name. Please enter the same name as used during signup.");
       return;
     }
@@ -48,7 +66,10 @@ const CompleteProfile = () => {
       
       if (res.data.success) {
         localStorage.setItem("profileCompleted", "true");
-        alert(res.data.message || "Profile completed successfully!");
+        if (res.data.user?.name) {
+          localStorage.setItem("signupName", res.data.user.name);
+        }
+        alert(res.data.message || "Profile updated successfully!");
         navigate("/welcome");
       }
     } catch (err) {
@@ -66,8 +87,12 @@ const CompleteProfile = () => {
           <div className="bg-amber-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-bounce">
             <User className="text-amber-600 w-8 h-8" />
           </div>
-          <h2 className="text-3xl font-extrabold text-gray-800">Complete Profile</h2>
-          <p className="text-gray-500 mt-2">Just a few more details to get you started!</p>
+          <h2 className="text-3xl font-extrabold text-gray-800">
+            {isEditMode ? "Edit Profile" : "Complete Profile"}
+          </h2>
+          <p className="text-gray-500 mt-2">
+            {isEditMode ? "Update your personal information" : "Just a few more details to get you started!"}
+          </p>
         </div>
 
         {error && (
@@ -92,12 +117,12 @@ const CompleteProfile = () => {
             </div>
           </div>
 
-          <div className="relative">
+        <div className="relative">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Phone Number</label>
             <div className="flex items-center mt-1 group">
               <Phone className="absolute left-3 text-gray-400 group-focus-within:text-amber-500 transition-colors w-5 h-5" />
               <input
-                type="text"
+                type="number"
                 name="phone"
                 placeholder="Your contact number"
                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-amber-400 focus:ring-4 focus:ring-amber-100 outline-none transition-all"
@@ -105,7 +130,7 @@ const CompleteProfile = () => {
                 onChange={handleChange}
               />
             </div>
-          </div>
+        </div> 
 
           <div className="relative">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Full Address</label>
@@ -135,7 +160,7 @@ const CompleteProfile = () => {
             ) : (
               <>
                 <CheckCircle className="w-5 h-5" />
-                <span>Finish Setup</span>
+                <span>{isEditMode ? "Update Profile" : "Finish Setup"}</span>
               </>
             )}
           </button>

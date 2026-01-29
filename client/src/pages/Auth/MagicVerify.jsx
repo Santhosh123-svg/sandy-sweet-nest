@@ -20,12 +20,12 @@ const MagicVerify = () => {
 
         if (data.success) {
           alert(data.message || "Verification successful!");
-          navigate("/login", { replace: true });
+          navigate("/login?fromVerify=true", { replace: true });
         }
       } catch (err) {
         console.error("Verification failed:", err);
         setError(err.response?.data?.message || "Invalid or expired magic link.");
-        setTimeout(() => navigate("/login"), 3000);
+        setTimeout(() => navigate("/login?fromVerify=true"), 3000);
       }
     };
 
