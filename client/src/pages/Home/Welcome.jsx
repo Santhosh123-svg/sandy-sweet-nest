@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiLogOut, FiUser, FiShoppingBag, FiInfo } from "react-icons/fi";
+import { FiLogOut, FiUser, FiShoppingBag, FiInfo, FiGrid } from "react-icons/fi";
 import { FaInstagram, FaWhatsapp, FaFacebook } from "react-icons/fa";
 
 const Welcome = () => {
@@ -96,8 +96,9 @@ const Welcome = () => {
               {role === "admin" && (
                 <button
                   onClick={() => navigate("/admin")}
-                  className="block w-full text-left px-2 py-2 font-semibold text-amber-700 hover:bg-amber-50 rounded-lg"
+                  className="flex items-center gap-2 w-full text-left px-2 py-2 font-semibold text-amber-700 hover:bg-amber-50 rounded-lg"
                 >
+                  <FiGrid className="text-xl" />
                   Dashboard
                 </button>
               )}
