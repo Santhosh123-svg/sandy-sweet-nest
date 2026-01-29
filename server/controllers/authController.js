@@ -19,7 +19,6 @@ export const signup = async (req, res) => {
       await sendMagicLink(email, magicLink);
       return res.status(201).json({ message: "Verification link sent to email" });
     } catch (mailErr) {
-      // Cleanup: Delete user if email fails so they can retry signup
       await User.findByIdAndDelete(user._id);
       console.error("Signup Rollback: User deleted due to mail failure");
       return res.status(500).json({ message: "Failed to send email. Please check your address or try again later." });
@@ -40,7 +39,6 @@ export const verifyMagicLink = async (req, res) => {
 
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-    // Mark as verified
     user.isVerified = true;
     await user.save();
 
@@ -60,7 +58,25 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
 
-    // Check if user is verified
+    // 🔐 Admin Login Flow
+    if (user.role === "admin") {
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) return res.status(400).json({ message: "Wrong password" });
+
+      const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      return res.json({
+        success: true,
+        token,
+        role: "admin",
+      });
+    }
+
+    // 👤 Normal User Login Flow
     if (!user.isVerified) {
       return res.status(403).json({ message: "Please verify your email first." });
     }
@@ -68,34 +84,33 @@ export const login = async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ message: "Wrong password" });
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    res.json({ 
-      token, 
-      role: user.role, 
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      token,
+      role: user.role,
       profileCompleted: user.profileCompleted,
-      name: user.name // Return name to help frontend validation
+      name: user.name,
     });
   } catch (err) {
     res.status(500).json({ message: "Login failed" });
   }
 };
 
-/* =========================
-   COMPLETE PROFILE
-========================= */
 export const completeProfile = async (req, res) => {
   let { name, phone, address } = req.body;
-
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Validation: Phone must be numeric
     if (phone && isNaN(Number(phone))) {
       return res.status(400).json({ message: "Phone number must be numeric" });
     }
 
-    // Validation: Name must match registration name on first submission
     if (!user.profileCompleted) {
       if (user.name.toLowerCase() !== name.trim().toLowerCase()) {
         return res.status(400).json({ 
@@ -105,7 +120,7 @@ export const completeProfile = async (req, res) => {
     }
 
     user.name = name;
-    user.phone = Number(phone); // Convert to number before saving
+    user.phone = Number(phone);
     user.address = address;
     user.profileCompleted = true;
 
@@ -127,24 +142,17 @@ export const completeProfile = async (req, res) => {
   }
 };
 
-/* =========================
-   FORGET ACCOUNT (DELETE)
-========================= */
 export const forgetAccount = async (req, res) => {
   const { email } = req.body;
-
   try {
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
-
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "No account found for this email." });
     }
-
     await User.findOneAndDelete({ email });
-
     res.json({ message: "Your account has been reset. Please register again." });
   } catch (err) {
     console.error("Forget Account Error:", err);
