@@ -69,9 +69,48 @@ export const login = async (req, res) => {
     if (!match) return res.status(400).json({ message: "Wrong password" });
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    res.json({ token, role: user.role, profileCompleted: user.profileCompleted });
+    res.json({ 
+      token, 
+      role: user.role, 
+      profileCompleted: user.profileCompleted,
+      name: user.name // Return name to help frontend validation
+    });
   } catch (err) {
     res.status(500).json({ message: "Login failed" });
+  }
+};
+
+/* =========================
+   COMPLETE PROFILE
+========================= */
+export const completeProfile = async (req, res) => {
+  const { name, phone, address } = req.body;
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Validation: Name must match registration name
+    if (user.name.toLowerCase() !== name.trim().toLowerCase()) {
+      return res.status(400).json({ 
+        message: "The name you entered does not match your registration name. Please enter the same name as used during signup." 
+      });
+    }
+
+    user.phone = phone;
+    user.address = address;
+    user.profileCompleted = true;
+
+    await user.save();
+
+    res.json({ 
+      success: true, 
+      message: "Profile updated successfully!",
+      profileCompleted: true 
+    });
+  } catch (err) {
+    console.error("Complete Profile Error:", err);
+    res.status(500).json({ message: "Failed to update profile" });
   }
 };
 

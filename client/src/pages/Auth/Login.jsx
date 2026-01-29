@@ -20,8 +20,16 @@ const Login = () => {
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
+      localStorage.setItem("profileCompleted", res.data.profileCompleted);
+      localStorage.setItem("signupName", res.data.name);
 
-      navigate(res.data.role === "admin" ? "/admin" : "/welcome");
+      if (res.data.role === "admin") {
+        navigate("/admin");
+      } else if (!res.data.profileCompleted) {
+        navigate("/complete-profile");
+      } else {
+        navigate("/welcome");
+      }
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
     } finally {
