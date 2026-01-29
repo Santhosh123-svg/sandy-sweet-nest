@@ -94,8 +94,8 @@ const AdminDashboard = () => {
                 <div className="space-y-1">
                   <h3 className="text-xs font-black text-amber-600 uppercase tracking-widest">Customer Details</h3>
                   <div className="bg-amber-50 p-3 rounded-2xl space-y-1">
-                    <p className="font-bold text-gray-800">👤 {order.customer?.name || order.userName}</p>
-                    <p className="text-sm text-gray-600">📧 {order.customer?.email || order.userEmail}</p>
+                    <p className="font-bold text-gray-800">👤 {order.customer?.name || "Unknown User"}</p>
+                    <p className="text-sm text-gray-600">📧 {order.customer?.email || "No Email"}</p>
                     <p className="text-sm text-gray-600">📞 {order.customer?.phone || "N/A"}</p>
                     <p className="text-sm text-gray-600 italic">📍 {order.customer?.address || "N/A"}</p>
                   </div>

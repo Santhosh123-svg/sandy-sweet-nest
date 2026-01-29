@@ -23,6 +23,7 @@ export const OrderProvider = ({ children }) => {
       orderId: data.orderId || order?.orderId || "",
       customer: {
         name: user?.name || "",
+        email: user?.email || "",
         phone: user?.phone || "",
         address: user?.address || "",
       },

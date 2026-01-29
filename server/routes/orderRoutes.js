@@ -27,15 +27,20 @@ router.post("/", protect, async (req, res) => {
     }
 
     const order = await Order.create({
-      orderId,
-      productName,
-      category,
-      quantity,
-      totalAmount,
-      deliveryDate,
-      deliveryTime,
-      cakeInfo,
-      customer
+      orderId: orderId,
+      productName: productName,
+      category: category,
+      quantity: quantity,
+      totalAmount: totalAmount,
+      deliveryDate: deliveryDate,
+      deliveryTime: deliveryTime,
+      cakeInfo: cakeInfo,
+      customer: {
+        name: customer?.name,
+        email: customer?.email,
+        phone: customer?.phone,
+        address: customer?.address,
+      }
     });
 
     res.status(201).json({ success: true, order });

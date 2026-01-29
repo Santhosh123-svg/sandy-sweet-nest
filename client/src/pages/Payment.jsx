@@ -46,18 +46,25 @@ const Payment = () => {
     try {
       setVerifying(true);
 
-      // 1. Update Order Context with the Order ID
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+      // 1. Update Order Context with the Order ID and Delivery Info
       const updatedOrder = {
         ...order,
         orderId: orderId,
         deliveryDate: order.cakeInfo?.deliveryDate || "",
         deliveryTime: order.cakeInfo?.preferredTime || "",
+        customer: {
+          name: user.name || "Unknown User",
+          email: user.email || "No Email",
+          phone: user.phone || "N/A",
+          address: user.address || "N/A",
+        },
       };
       
       placeOrder(updatedOrder);
 
       // 2. Save Order to Database (for Admin Dashboard)
-      // Note: baseURL in axiosInstance is https://.../ , so we use /api/orders
       await axiosInstance.post("/api/orders", updatedOrder);
 
       // 3. Success -> Navigate to WhatsApp Confirmation
