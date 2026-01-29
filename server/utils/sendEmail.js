@@ -22,15 +22,17 @@ export const sendMagicLink = async (toEmail, magicLink) => {
       </div>
     `;
     
-    // Ensure MAIL_FROM matches a VERIFIED SENDER in Brevo Dashboard
+    // NOTE: The sender email MUST be verified in your Brevo Dashboard
     sendSmtpEmail.sender = { 
       name: "Sandy's Sweet Nest", 
-      email: process.env.MAIL_FROM 
+      email: process.env.MAIL_USER 
     };
     
     sendSmtpEmail.to = [{ email: toEmail }];
 
     console.log("⏳ Attempting to send email via Brevo...");
+    console.log("📤 Sender Email:", process.env.MAIL_USER);
+    
     const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
     console.log("✅ Brevo API Response:", JSON.stringify(result, null, 2));
 
