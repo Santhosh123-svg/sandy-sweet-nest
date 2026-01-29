@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../utils/axiosInstance";
 import { motion } from "framer-motion";
 import { Send, CheckCircle } from "lucide-react";
 import { useOrder } from "../context/OrderContext";
@@ -11,104 +10,39 @@ const WhatsAppConfirm = () => {
   const navigate = useNavigate();
   const sent = useRef(false);
 
-  const sendWhatsApp = async () => {
+  const sendWhatsApp = () => {
     if (sent.current) return;
     sent.current = true;
 
-    const token = localStorage.getItem("token");
+    const isCake =
+      order?.category?.toLowerCase() === "cake" ||
+      order?.category?.toLowerCase() === "cakes";
 
-    if (!token) {
-      alert("Login required! Please login first.");
-      navigate("/login");
-      return;
-    }
+    const message = `🧁 New Order Received
 
-    try {
-      // ✅ Save order to backend
-      await axiosInstance.post("/orders", order);
+👤 Name: ${order.customer?.name || "-"}
+📞 Phone: ${order.customer?.phone || "-"}
+📍 Address: ${order.customer?.address || "-"}
 
-      // 🔥 CUSTOMER MESSAGE
-      const customerMsg = `
-🎂 ORDER CONFIRMED – Sandy Sweet Nest
-
-Product: ${order.productName}
-Quantity: ${order.quantity}
-Amount: ₹${order.totalAmount}
-
-Flavor: ${order.flavor || "-"}
-Size: ${order.size || "-"}
-Shape: ${order.shape || "-"}
-Toppings: ${order.toppings?.length ? order.toppings.map(t => t.name).join(", ") : "-"}
-
-📌 Delivery:
-Date: ${order.cakeInfo?.deliveryDate || "-"}
-Time: ${order.cakeInfo?.preferredTime || "-"}
-
-🎁 Purpose: ${order.cakeInfo?.purpose || "-"}
-✍ Text on Cake: ${order.cakeInfo?.cakeText || "-"}
-
-👤 Customer Details
-Name: ${order.customer?.name || "-"}
-Phone: ${order.customer?.phone || "-"}
-Address: ${order.customer?.address || "-"}
-
-Thank you for ordering with us ❤️
+📦 Item: ${order.productName}
+🔢 Quantity: ${order.quantity}
+💰 Total: ₹${order.totalAmount}
+${isCake ? `
+🍰 Flavor: ${order.flavor || "-"}
+⚖️ Size: ${order.size || "-"}
+🎨 Shape: ${order.shape || "-"}
+🍫 Toppings: ${order.toppings?.length ? order.toppings.map((t) => t.name).join(", ") : "-"}
+🎂 Purpose: ${order.cakeInfo?.purpose || "-"}
+✍️ Text on Cake: ${order.cakeInfo?.cakeText || "-"}
+` : ""}
+📅 Delivery Date: ${order.cakeInfo?.deliveryDate || "-"}
+⏰ Preferred Time: ${order.cakeInfo?.preferredTime || "-"}
 `;
 
-      // 🚨 ADMIN MESSAGE
-      const adminMsg = `
-🚨 NEW ORDER
+    const whatsappUrl = `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
-Product: ${order.productName}
-Quantity: ${order.quantity}
-Amount: ₹${order.totalAmount}
-
-Flavor: ${order.flavor || "-"}
-Size: ${order.size || "-"}
-Shape: ${order.shape || "-"}
-Toppings: ${order.toppings?.length ? order.toppings.map(t => t.name).join(", ") : "-"}
-
-📌 Delivery:
-Date: ${order.cakeInfo?.deliveryDate || "-"}
-Time: ${order.cakeInfo?.preferredTime || "-"}
-
-🎁 Purpose: ${order.cakeInfo?.purpose || "-"}
-✍ Text on Cake: ${order.cakeInfo?.cakeText || "-"}
-
-👤 Customer Details
-Name: ${order.customer?.name || "-"}
-Phone: ${order.customer?.phone || "-"}
-Address: ${order.customer?.address || "-"}
-`;
-
-      // ✅ Open WhatsApp BEFORE navigating to success page
-      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-      if (isMobile) {
-        const whatsappWindow = window.open(
-          `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(adminMsg)}`,
-          "_blank"
-        );
-        if (!whatsappWindow) {
-          window.location.href = `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(adminMsg)}`;
-        }
-      } else {
-        window.open(
-          `https://wa.me/${order.customer?.phone}?text=${encodeURIComponent(customerMsg)}`,
-          "_blank"
-        );
-        window.open(
-          `https://wa.me/${PAYMENT_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(adminMsg)}`,
-          "_blank"
-        );
-      }
-
-      navigate("/order-success");
-    } catch (error) {
-      console.log(error);
-      alert("Order failed! Please try again.");
-      sent.current = false;
-    }
+    window.open(whatsappUrl, "_blank");
+    navigate("/order-success");
   };
 
   if (!order) return null;
