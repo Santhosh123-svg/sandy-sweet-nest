@@ -114,6 +114,31 @@ export const completeProfile = async (req, res) => {
   }
 };
 
+/* =========================
+   FORGET ACCOUNT (DELETE)
+========================= */
+export const forgetAccount = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "No account found for this email." });
+    }
+
+    await User.findOneAndDelete({ email });
+
+    res.json({ message: "Your account has been reset. Please register again." });
+  } catch (err) {
+    console.error("Forget Account Error:", err);
+    res.status(500).json({ message: "Server error during account reset" });
+  }
+};
+
 export const sendMagicLinkForLogin = async (req, res) => {
   try {
     const { email } = req.body;

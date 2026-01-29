@@ -68,6 +68,28 @@ const Login = () => {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
+          
+          <div className="text-center">
+            <button
+              onClick={async () => {
+                const email = prompt("Please enter your email to reset your account.");
+                if (!email) {
+                  alert("Please enter your email to reset your account.");
+                  return;
+                }
+                try {
+                  const res = await axiosInstance.post("/api/auth/forget-account", { email });
+                  alert(res.data.message || "Your account has been reset. Please register again.");
+                  navigate("/signup");
+                } catch (err) {
+                  alert(err.response?.data?.message || "Account reset failed.");
+                }
+              }}
+              className="text-sm text-amber-600 hover:underline font-medium"
+            >
+              Forget Password?
+            </button>
+          </div>
         </div>
 
         <p className="text-sm text-center mt-6 text-gray-600">

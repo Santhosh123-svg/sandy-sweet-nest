@@ -1,5 +1,5 @@
 import express from "express";
-import { signup, verifyMagicLink, login, getMe, sendMagicLinkForLogin, completeProfile } from "../controllers/authController.js";
+import { signup, verifyMagicLink, login, getMe, sendMagicLinkForLogin, completeProfile, forgetAccount } from "../controllers/authController.js";
 import verifyToken from "../middleware/authMiddleware.js";
 const router = express.Router();
 router.post("/signup", signup);
@@ -8,4 +8,5 @@ router.post("/login", login);
 router.post("/magic/send-link", sendMagicLinkForLogin);
 router.get("/me", verifyToken, getMe);
 router.put("/complete-profile", verifyToken, completeProfile);
+router.post("/forget-account", forgetAccount);
 export default router;
