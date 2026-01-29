@@ -2,28 +2,34 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { sendMagicLink } from "../utils/sendEmail.js";
+
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
   try {
-    if (!name || !email || !password) return res.status(400).json({ message: "All fields required" });
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ message: "User already exists" });
+
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashed, role: "user", profileCompleted: false });
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
     const magicLink = `${process.env.CLIENT_URL}/magic-verify?token=${token}`;
+
     try {
       await sendMagicLink(email, magicLink);
-      res.status(201).json({ success: true, message: "Verification link sent to email" });
+      return res.status(201).json({ message: "Verification link sent to email" });
     } catch (mailErr) {
-      console.error("Mail Error:", mailErr);
-      res.status(500).json({ message: "Account created but failed to send email. Please try logging in." });
+      // Cleanup: Delete user if email fails so they can retry signup
+      await User.findByIdAndDelete(user._id);
+      console.error("Signup Rollback: User deleted due to mail failure");
+      return res.status(500).json({ message: "Failed to send email. Please check your address or try again later." });
     }
   } catch (err) {
-    console.error("Signup Error:", err);
+    console.error("SIGNUP CRITICAL ERROR:", err);
     res.status(500).json({ message: "Signup failed" });
   }
 };
+
 export const verifyMagicLink = async (req, res) => {
   try {
     const { token } = req.query;
