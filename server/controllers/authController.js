@@ -40,18 +40,13 @@ export const verifyMagicLink = async (req, res) => {
 
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-    // Generate long-term auth token (7 days)
-    const authToken = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    // Mark as verified
+    user.isVerified = true;
+    await user.save();
 
     res.json({
       success: true,
-      token: authToken,
-      role: user.role,
-      profileCompleted: user.profileCompleted
+      message: "Verification complete. You can now log in."
     });
   } catch (err) {
     console.error("Verification Error:", err.message);
@@ -64,6 +59,11 @@ export const login = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
+
+    // Check if user is verified
+    if (!user.isVerified) {
+      return res.status(403).json({ message: "Please verify your email first." });
+    }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ message: "Wrong password" });

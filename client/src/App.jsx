@@ -13,7 +13,7 @@ import MoreItems from "./pages/Products/MoreItems";
 import Checkout from "./pages/Checkout";
 import CheckoutDetails from "./pages/CheckoutDetails";
 
-/* 🔥 NEW (ORDER FLOW) */
+/* 🔥 ORDER FLOW */
 import OrderFlow from "./pages/OrderFlow";
 import CustomerDetails from "./pages/CustomerDetails";
 import Payment from "./pages/Payment";
@@ -28,12 +28,12 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-           <Route path="/signup" element={<Signup />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/magic-verify" element={<Verify />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/admin" element={<AdminDashboard />} />
-           <Route path="/about" element={<About />} /> 
+          <Route path="/about" element={<About />} />
 
           {/* PRODUCTS */}
           <Route path="/cakes" element={<Cakes />} />
@@ -41,7 +41,7 @@ function App() {
           <Route path="/cookies" element={<Cookies />} />
           <Route path="/more-items" element={<MoreItems />} />
 
-          {/* 🔥 ORDER FLOW PAGE */}
+          {/* ORDER FLOW */}
           <Route path="/order-flow" element={<OrderFlow />} />
           <Route path="/customer-details" element={<CustomerDetails />} />
           <Route path="/payment" element={<Payment />} />

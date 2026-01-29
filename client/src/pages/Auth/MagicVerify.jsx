@@ -15,19 +15,16 @@ const MagicVerify = () => {
       }
 
       try {
+        // Backend endpoint
         const { data } = await axiosInstance.get(`/api/auth/magic-verify${search}`);
 
-        if (data.success && data.token) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("role", data.role || "user");
-          
-          // Success -> Go to welcome or dashboard
-          navigate("/welcome", { replace: true });
+        if (data.success) {
+          alert(data.message || "Verification successful!");
+          navigate("/login", { replace: true });
         }
       } catch (err) {
         console.error("Verification failed:", err);
         setError(err.response?.data?.message || "Invalid or expired magic link.");
-        
         setTimeout(() => navigate("/login"), 3000);
       }
     };
