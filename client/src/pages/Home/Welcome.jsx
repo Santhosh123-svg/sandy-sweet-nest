@@ -110,15 +110,13 @@ const Welcome = () => {
                 <span className="font-medium">My Orders</span>
               </button>
 
-              <div className="flex items-center justify-between px-2 py-2">
-                <button
-                  onClick={() => navigate("/about")}
-                  className="p-2 text-gray-700 hover:bg-amber-50 rounded-full transition"
-                  title="About"
-                >
-                  <FiInfo className="text-2xl text-amber-600" />
-                </button>
-              </div>
+              <button
+                onClick={() => navigate("/about")}
+                className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:bg-amber-50 rounded-lg"
+              >
+                <FiInfo className="text-xl text-amber-600" />
+                <span className="font-medium">About</span>
+              </button>
 
               <button
                 onClick={() => navigate("/complete-profile?edit=true")}
