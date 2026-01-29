@@ -37,14 +37,14 @@ const Payment = () => {
   )}`;
 
   const handlePaid = () => {
-    if (!orderId) {
-      alert("Please enter your Order ID (like ORD1234)");
+    if (!orderId.trim()) {
+      alert("Please enter your Order ID / Transaction ID to proceed 💳");
       return;
     }
 
     setVerifying(true);
 
-    // Save orderId inside order context (so whatsapp can use it)
+    // Save orderId inside order context
     placeOrder({
       ...order,
       orderId: orderId,
@@ -52,7 +52,7 @@ const Payment = () => {
 
     setTimeout(() => {
       navigate("/whatsapp-confirm");
-    }, 6000);
+    }, 4000);
   };
 
   return (

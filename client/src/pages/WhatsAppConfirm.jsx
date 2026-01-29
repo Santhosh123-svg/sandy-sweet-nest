@@ -18,7 +18,8 @@ const WhatsAppConfirm = () => {
       order?.category?.toLowerCase() === "cake" ||
       order?.category?.toLowerCase() === "cakes";
 
-    const message = `🧁 New Order Received
+    const message = `🧾 Order ID: ${order.orderId || "-"}
+🧁 New Order Received
 
 👤 Name: ${order.customer?.name || "-"}
 📞 Phone: ${order.customer?.phone || "-"}

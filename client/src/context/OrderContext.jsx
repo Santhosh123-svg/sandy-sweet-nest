@@ -20,6 +20,7 @@ export const OrderProvider = ({ children }) => {
 
     setOrder({
       ...data,
+      orderId: data.orderId || order?.orderId || "",
       customer: {
         name: user?.name || "",
         phone: user?.phone || "",
