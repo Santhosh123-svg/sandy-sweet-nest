@@ -83,8 +83,15 @@ const AdminDashboard = () => {
                     <p className="text-xs font-bold uppercase tracking-widest opacity-80">Order ID</p>
                     <p className="text-lg font-black">{order.orderId || "N/A"}</p>
                   </div>
-                  <div className="bg-white/20 px-2 py-1 rounded text-xs font-bold">
-                    {new Date(order.createdAt).toLocaleDateString()}
+                  <div className="bg-white/20 px-2 py-1 rounded text-xs font-bold flex flex-col items-end">
+                    <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                    {order.status && (
+                      <span className={`mt-1 px-2 py-0.5 rounded-full text-[10px] uppercase font-black ${
+                        order.status.includes("Cancelled") ? "bg-red-500 text-white" : "bg-green-500 text-white"
+                      }`}>
+                        {order.status}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

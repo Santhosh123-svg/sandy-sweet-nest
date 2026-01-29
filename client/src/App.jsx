@@ -20,6 +20,7 @@ import CustomerDetails from "./pages/CustomerDetails";
 import Payment from "./pages/Payment";
 import WhatsAppConfirm from "./pages/WhatsAppConfirm";
 import OrderSuccess from "./pages/OrderSuccess";
+import OrderHistory from "./pages/Orders/OrderHistory";
 import { OrderProvider } from "./context/OrderContext";
 import About from "./pages/Home/About";
 
@@ -35,6 +36,7 @@ function App() {
           <Route path="/complete-profile" element={<CompleteProfile />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/my-orders" element={<OrderHistory />} />
           <Route path="/about" element={<About />} />
 
           {/* PRODUCTS */}

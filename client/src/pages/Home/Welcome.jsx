@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiLogOut, FiUser } from "react-icons/fi";
+import { FiLogOut, FiUser, FiShoppingBag, FiInfo } from "react-icons/fi";
 import { FaInstagram, FaWhatsapp, FaFacebook } from "react-icons/fa";
 
 const Welcome = () => {
@@ -102,12 +102,23 @@ const Welcome = () => {
                 </button>
               )}
 
-              <Link
-                to="/about"
-                className="block px-2 py-2 text-gray-700 hover:bg-amber-50 rounded-lg"
+              <button
+                onClick={() => navigate("/my-orders")}
+                className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:bg-amber-50 rounded-lg"
               >
-                About
-              </Link>
+                <FiShoppingBag className="text-xl text-amber-600" />
+                <span className="font-medium">My Orders</span>
+              </button>
+
+              <div className="flex items-center justify-between px-2 py-2">
+                <button
+                  onClick={() => navigate("/about")}
+                  className="p-2 text-gray-700 hover:bg-amber-50 rounded-full transition"
+                  title="About"
+                >
+                  <FiInfo className="text-2xl text-amber-600" />
+                </button>
+              </div>
 
               <button
                 onClick={() => navigate("/complete-profile?edit=true")}
