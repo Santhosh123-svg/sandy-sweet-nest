@@ -21,6 +21,12 @@ const CustomerDetails = () => {
     order?.category?.toLowerCase() === "cake" ||
     order?.category?.toLowerCase() === "cakes";
 
+  const getMinDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  };
+
   const [cakeDetails, setCakeDetails] = useState({
     deliveryDate: "",
     preferredTime: "",
@@ -52,6 +58,24 @@ const CustomerDetails = () => {
 
     if (!deliveryDate || !preferredTime) {
       alert("Please fill delivery date and time 🕒");
+      return;
+    }
+
+    // Date validation (redundant with min attribute but safe)
+    const selectedDate = new Date(deliveryDate);
+    const tomorrow = new Date();
+    tomorrow.setHours(0, 0, 0, 0);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (selectedDate < tomorrow) {
+      alert("Delivery date must be at least 24 hours from today 📅");
+      return;
+    }
+
+    // Time validation (9 AM to 9 PM)
+    const [hours, minutes] = preferredTime.split(":").map(Number);
+    if (hours < 9 || hours > 21 || (hours === 21 && minutes > 0)) {
+      alert("Preferred time must be between 9:00 AM and 9:00 PM ⏰");
       return;
     }
 
@@ -106,6 +130,7 @@ const CustomerDetails = () => {
           <input
             type="date"
             name="deliveryDate"
+            min={getMinDate()}
             value={cakeDetails.deliveryDate}
             onChange={handleChange}
             className="w-full p-3 rounded-2xl bg-white/70 border focus:ring-2 focus:ring-amber-400 outline-none"
@@ -120,6 +145,8 @@ const CustomerDetails = () => {
           <input
             type="time"
             name="preferredTime"
+            min="09:00"
+            max="21:00"
             value={cakeDetails.preferredTime}
             onChange={handleChange}
             className="w-full p-3 rounded-2xl bg-white/70 border focus:ring-2 focus:ring-amber-400 outline-none"

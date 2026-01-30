@@ -103,13 +103,15 @@ const Welcome = () => {
                 </button>
               )}
 
-              <button
-                onClick={() => navigate("/my-orders")}
-                className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:bg-amber-50 rounded-lg"
-              >
-                <FiShoppingBag className="text-xl text-amber-600" />
-                <span className="font-medium">My Orders</span>
-              </button>
+              {role === "user" && (
+                <button
+                  onClick={() => navigate("/my-orders")}
+                  className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:bg-amber-50 rounded-lg"
+                >
+                  <FiShoppingBag className="text-xl text-amber-600" />
+                  <span className="font-medium">My Orders</span>
+                </button>
+              )}
 
               <button
                 onClick={() => navigate("/about")}
