@@ -121,13 +121,15 @@ const Welcome = () => {
                 <span className="font-medium">About</span>
               </button>
 
-              <button
-                onClick={() => navigate("/complete-profile?edit=true")}
-                className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:bg-amber-50 rounded-lg"
-              >
-                <FiUser className="text-xl" />
-                Edit Profile
-              </button>
+              {role === "user" && (
+                <button
+                  onClick={() => navigate("/complete-profile?edit=true")}
+                  className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:bg-amber-50 rounded-lg"
+                >
+                  <FiUser className="text-xl" />
+                  Edit Profile
+                </button>
+              )}
 
               <button
                 onClick={handleLogout}
