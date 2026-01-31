@@ -7,21 +7,17 @@ import { FaInstagram, FaWhatsapp, FaFacebook } from "react-icons/fa";
 const Welcome = () => {
   const [showCategories, setShowCategories] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showIntro, setShowIntro] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
   const navigate = useNavigate();
 
   const role = localStorage.getItem("role");
 
-  // ✅ FIRST TIME LOGIN CAKE ANIMATION
+  // ✅ 2-SECOND CAKE LOADER ANIMATION
   useEffect(() => {
-    const firstLogin = localStorage.getItem("firstLogin");
-    if (firstLogin === "true") {
-      setShowIntro(true);
-      setTimeout(() => {
-        setShowIntro(false);
-        localStorage.removeItem("firstLogin");
-      }, 2000);
-    }
+    const timer = setTimeout(() => {
+      setShowIntro(false);
+    }, 2000);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleLogout = () => {
