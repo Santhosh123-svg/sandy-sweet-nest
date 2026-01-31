@@ -43,12 +43,15 @@ const Welcome = () => {
   // 🔥 INTRO SCREEN
   if (showIntro) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-amber-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 to-amber-100">
         <motion.div
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ duration: 1 }}
-          className="text-7xl"
+          animate={{ rotate: 360 }}
+          transition={{ 
+            duration: 1.5, 
+            repeat: Infinity, 
+            ease: "linear" 
+          }}
+          className="text-8xl drop-shadow-2xl select-none"
         >
           🍰
         </motion.div>
