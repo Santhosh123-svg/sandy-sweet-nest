@@ -3,7 +3,7 @@ import sgMail from "@sendgrid/mail";
 // ✅ USE ENV VARIABLE (SAFE)
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const senderEmail = "valarmathisanthosh33@gmail.com";
+const senderEmail = process.env.SENDER_EMAIL;
 
 /**
  * Send OTP via SendGrid
