@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "SandysSweetNest",
+    "displayName": "Sandy's Sweet Nest",
+    "scheme": "sandyapp",
+    "platforms": ["ios", "android", "web"],
+
+    "icon": "./assets/LOGO1.jpeg",
+
+    "android": {
+      "package": "com.anonymous.sandyssweetnest",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/LOGO1.jpeg",
+        "backgroundColor": "#f59e0b"
+      }
+    },
+
+    "splash": {
+      "image": "./assets/LOGO2.jpeg",
+      "resizeMode": "contain",
+      "backgroundColor": "#fffbeb"
+    },
+
+    "extra": {
+      "eas": {
+        "projectId": "577fece4-d892-4105-8035-04a80dde7c64"
+      }
+    }
+  }
+}
