@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // 🔥 IMPORTANT: Replace this IP if your network changes
 // Make sure mobile & laptop are in SAME WIFI
-const API_BASE_URL = "http://10.183.54.63:5000";
+const API_BASE_URL = "https://sandy-sweet-nest-2.onrender.com";
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
