@@ -139,7 +139,16 @@ const WelcomeScreen = ({ navigation }) => {
       Alert.alert("Error", "Something went wrong while logging out");
     }
   };
-
+const confirmLogout = () => {
+  Alert.alert(
+    "Confirm Logout",
+    "Logout panna poringala?",
+    [
+      { text: "Cancel", style: "cancel" },
+      { text: "Yes", onPress: handleLogout },
+    ]
+  );
+};
   const openSocialLink = (url, anim) => {
     // Animate icon tap
     Animated.sequence([
@@ -221,7 +230,7 @@ const WelcomeScreen = ({ navigation }) => {
                 <Text style={styles.menuText}>Edit Profile</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+            <TouchableOpacity style={styles.menuItem} onPress={confirmLogout}>
               <Ionicons name="log-out" size={20} />
               <Text style={styles.menuText}>Logout</Text>
             </TouchableOpacity>
