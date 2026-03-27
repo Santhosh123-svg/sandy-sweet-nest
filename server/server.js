@@ -13,6 +13,11 @@ import { verifyMagicLink } from "./controllers/authController.js";
 dotenv.config();
 const app = express();
 
+app.use((req, res, next) => {
+  console.log("🌐 API HIT 👉", req.method, req.url);
+  next();
+});
+
 // 1. GLOBAL MIDDLEWARE
 // Enable CORS and JSON parsing immediately to handle incoming requests
 app.use(cors({ origin: true, credentials: true }));
@@ -49,4 +54,9 @@ mongoose.connect(process.env.MONGO_URI)
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server successfully started on port ${PORT}`);
+});
+
+console.log("ENV CHECK 👉", {
+  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY ? "YES" : "NO",
+  SENDER_EMAIL: process.env.SENDER_EMAIL
 });

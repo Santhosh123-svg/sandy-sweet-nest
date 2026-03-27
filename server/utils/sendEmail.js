@@ -1,77 +1,100 @@
-import sgMail from "@sendgrid/mail";
-
-// ✅ USE ENV VARIABLE (SAFE)
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-const senderEmail = process.env.SENDER_EMAIL;
+import nodemailer from "nodemailer";
 
 /**
- * Send OTP via SendGrid
- * @param {string} toEmail - Recipient email
- * @param {string} otp - One time password
+ * Send OTP via Gmail
+ * @param {string} toEmail
+ * @param {string} otp
  */
 export const sendOtpEmail = async (toEmail, otp) => {
   try {
-    console.log("Sending email to:", toEmail);
-    const finalToEmail = String(toEmail).trim();
+    // 🔥 FROM ENV
+    const userEmail = process.env.EMAIL_USER;
+    const appPassword = process.env.EMAIL_PASS;
+
+    console.log("📧 Sending OTP to:", toEmail);
+    console.log("👤 Sender Email:", userEmail);
+
+    if (!userEmail || !appPassword) {
+      throw new Error("Email or App Password missing");
+    }
+
+    // 🔥 TRANSPORT
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: userEmail,
+        pass: appPassword,
+      },
+    });
 
     const msg = {
-      to: finalToEmail,
-      from: senderEmail,
+      from: userEmail,
+      to: String(toEmail).trim(),
       subject: "Your OTP Code",
       html: `
-           <div style="font-family: Arial; padding:20px;">
-             <h2 style="color:#f59e0b;">Sandy's Sweet Nest 🍰</h2>
-             <p>Your OTP is:</p>
-             <h1 style="letter-spacing: 4px;">${otp}</h1>
-             <p>This OTP is valid for 5 minutes</p>
-           </div>
-         `,
+        <div style="font-family: Arial; padding:20px;">
+          <h2 style="color:#f59e0b;">Sandy's Sweet Nest 🍰</h2>
+          <p>Your OTP is:</p>
+          <h1 style="letter-spacing: 4px;">${otp}</h1>
+          <p>This OTP is valid for 5 minutes</p>
+        </div>
+      `,
     };
 
-    const response = await sgMail.send(msg);
+    await transporter.sendMail(msg);
 
-    console.log("✅ EMAIL SENT via SENDGRID", response[0].statusCode);
+    console.log("✅ OTP EMAIL SENT via GMAIL");
 
   } catch (error) {
-    console.error(
-      "❌ SENDGRID ERROR 👉",
-      error?.response?.body || error?.message || error
-    );
+    console.error("❌ GMAIL ERROR 👉", error?.message || error);
     throw new Error("Email send failed");
   }
 };
 
 /**
- * Keep magic link sender for web routes compatibility.
- * @param {string} toEmail
- * @param {string} magicLink
+ * Send Magic Link Email
  */
 export const sendMagicLink = async (toEmail, magicLink) => {
   try {
-    const finalToEmail = String(toEmail).trim();
+    const userEmail = process.env.EMAIL_USER;
+    const appPassword = process.env.EMAIL_PASS;
+
+    console.log("🔗 Sending Magic Link to:", toEmail);
+
+    if (!userEmail || !appPassword) {
+      throw new Error("Email or App Password missing");
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: userEmail,
+        pass: appPassword,
+      },
+    });
+
     const msg = {
-      to: finalToEmail,
-      from: senderEmail,
+      from: userEmail,
+      to: String(toEmail).trim(),
       subject: "Your Magic Login Link",
       html: `
-           <div style="font-family: Arial; padding:20px;">
-             <h2 style="color:#f59e0b;">Sandy's Sweet Nest 🍰</h2>
-             <p>Click below to login:</p>
-             <a href="${magicLink}"
-                style="background:#f59e0b;color:white;padding:10px 20px;border-radius:5px;">
-               Login
-             </a>
-           </div>
-         `,
+        <div style="font-family: Arial; padding:20px;">
+          <h2 style="color:#f59e0b;">Sandy's Sweet Nest 🍰</h2>
+          <p>Click below to login:</p>
+          <a href="${magicLink}"
+             style="background:#f59e0b;color:white;padding:10px 20px;border-radius:5px;">
+            Login
+          </a>
+        </div>
+      `,
     };
 
-    await sgMail.send(msg);
+    await transporter.sendMail(msg);
+
+    console.log("✅ MAGIC LINK SENT via GMAIL");
+
   } catch (error) {
-    console.error(
-      "❌ SENDGRID ERROR 👉",
-      error?.response?.body || error?.message || error
-    );
+    console.error("❌ GMAIL ERROR 👉", error?.message || error);
     throw new Error("Email send failed");
   }
 };
