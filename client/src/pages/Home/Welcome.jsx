@@ -10,7 +10,8 @@ const Welcome = () => {
   const [showIntro, setShowIntro] = useState(true);
   const navigate = useNavigate();
 
-  const role = localStorage.getItem("role");
+  // ✅ FIX: normalize role to lowercase
+  const role = (localStorage.getItem("role") || "").toLowerCase();
 
   const categories = [
     { name: "Cakes", desc: "Birthday • Wedding • Special" },
@@ -19,7 +20,6 @@ const Welcome = () => {
     { name: "More Items", desc: "Brownies • Pastries" },
   ];
 
-  // 2-SECOND INTRO LOADER
   useEffect(() => {
     const timer = setTimeout(() => setShowIntro(false), 2000);
     return () => clearTimeout(timer);
@@ -57,7 +57,6 @@ const Welcome = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-amber-50 to-amber-100">
-      {/* NAVBAR */}
       <nav className="relative isolate z-50 w-full px-6 py-4 flex items-center justify-between bg-white/70 backdrop-blur-md border-b border-white/40 shadow-sm">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-2xl bg-amber-200 flex items-center justify-center shadow-md">
@@ -136,7 +135,6 @@ const Welcome = () => {
         </div>
       </nav>
 
-      {/* MAIN */}
       <div className="flex-1 flex items-center justify-center">
         <div className="w-full max-w-6xl px-6 py-12">
           <motion.div
@@ -145,7 +143,6 @@ const Welcome = () => {
             transition={{ duration: 0.8 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-8"
           >
-            {/* LEFT */}
             <div className="rounded-[30px] bg-white/80 backdrop-blur-lg border border-white/40 shadow-2xl p-8">
               <h2 className="text-5xl font-extrabold text-amber-600 mb-4">
                 Welcome to <br /> Sandy’s Sweet Nest
@@ -175,7 +172,6 @@ const Welcome = () => {
               </div>
             </div>
 
-            {/* RIGHT */}
             {showCategories && (
               <div className="rounded-[30px] bg-white/80 backdrop-blur-lg border border-white/40 shadow-2xl p-6">
                 <h3 className="text-2xl font-bold text-amber-600 mb-4">
@@ -200,7 +196,6 @@ const Welcome = () => {
         </div>
       </div>
 
-      {/* FOOTER */}
       <footer className="w-full px-6 py-4 bg-white/60 backdrop-blur-md border-t border-white/30">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-gray-600 text-sm">

@@ -26,24 +26,28 @@ const Login = () => {
       setLoading(true);
       const res = await axiosInstance.post("/api/auth/login", { email, password });
 
+      const user = res.data.user;
+
+      // ✅ Only allow login if user is verified
+      if (!user.isVerified) {
+        alert("Your email is not verified. Check your email for magic link.");
+        return;
+      }
+
       // Save token & user info
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      localStorage.setItem("profileCompleted", res.data.profileCompleted);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      localStorage.setItem("signupName", res.data.user?.name || "");
+      localStorage.setItem("role", user.role);
+      localStorage.setItem("profileCompleted", user.profileCompleted);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("signupName", user?.name || "");
 
       // ✅ Redirect based on role & profile completion
-      if (res.data.role === "admin") {
+      if (user.role === "admin") {
         navigate("/admin");
+      } else if (!user.profileCompleted) {
+        navigate("/complete-profile");
       } else {
-        if (!res.data.user.isVerified) {
-          alert("Your email is not verified. Check your email for magic link.");
-        } else if (!res.data.profileCompleted) {
-          navigate("/complete-profile");
-        } else {
-          navigate("/welcome");
-        }
+        navigate("/welcome");
       }
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
