@@ -25,6 +25,8 @@ const Login = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(40)).current;
   const scaleBtn = useRef(new Animated.Value(1)).current;
+  const focusEmail = useRef(new Animated.Value(0)).current;
+  const focusPassword = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -59,6 +61,7 @@ const Login = () => {
       });
 
       const { token, user } = res.data;
+
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("user", JSON.stringify(user));
       await AsyncStorage.setItem("role", user.role || "user");
@@ -76,7 +79,6 @@ const Login = () => {
       }
     } catch (err) {
       console.log("LOGIN ERROR 👉", err?.response?.data || err.message);
-
       Alert.alert(
         "Login Failed",
         err.response?.data?.message || "Unable to login"
@@ -101,6 +103,12 @@ const Login = () => {
     }).start();
   };
 
+  const getBorder = (anim) =>
+    anim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["#eee", "#f59e0b"],
+    });
+
   return (
     <View style={styles.container}>
       <Animated.View
@@ -115,7 +123,12 @@ const Login = () => {
         <Text style={styles.title}>Welcome Back 🍰</Text>
 
         {/* EMAIL */}
-        <Animated.View style={styles.inputWrapper}>
+        <Animated.View
+          style={[
+            styles.inputWrapper,
+            { borderColor: getBorder(focusEmail) },
+          ]}
+        >
           <TextInput
             placeholder="Email"
             placeholderTextColor="#aaa"
@@ -123,11 +136,30 @@ const Login = () => {
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
+            onFocus={() =>
+              Animated.timing(focusEmail, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: false,
+              }).start()
+            }
+            onBlur={() =>
+              Animated.timing(focusEmail, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: false,
+              }).start()
+            }
           />
         </Animated.View>
 
         {/* PASSWORD */}
-        <Animated.View style={styles.inputWrapper}>
+        <Animated.View
+          style={[
+            styles.inputWrapper,
+            { borderColor: getBorder(focusPassword) },
+          ]}
+        >
           <TextInput
             placeholder="Password"
             placeholderTextColor="#aaa"
@@ -135,6 +167,20 @@ const Login = () => {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            onFocus={() =>
+              Animated.timing(focusPassword, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: false,
+              }).start()
+            }
+            onBlur={() =>
+              Animated.timing(focusPassword, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: false,
+              }).start()
+            }
           />
         </Animated.View>
 
@@ -185,7 +231,6 @@ const styles = StyleSheet.create({
     padding: 22,
     borderRadius: 25,
 
-    // 💎 Premium shadow
     shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 20,
@@ -206,10 +251,10 @@ const styles = StyleSheet.create({
   inputWrapper: {
     marginBottom: 14,
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#eee",
     overflow: "hidden",
     backgroundColor: "#fff",
-
-    // subtle glow
     shadowColor: "#f59e0b",
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -217,12 +262,10 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    borderWidth: 1,
-    borderColor: "#eee",
     padding: 14,
-    borderRadius: 12,
     fontSize: 15,
     backgroundColor: "#fff",
+    borderRadius: 12,
   },
 
   button: {
@@ -231,7 +274,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     marginTop: 10,
-
     shadowColor: "#f59e0b",
     shadowOpacity: 0.4,
     shadowRadius: 10,

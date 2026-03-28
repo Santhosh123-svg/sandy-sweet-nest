@@ -452,7 +452,8 @@ export const forgotPasswordVerifyOtp = async (req, res) => {
       });
     }
 
-    const { stored, email: normalizedEmail } = verification;
+    const normalizedEmail = String(email || "").trim().toLowerCase();
+    const { stored } = verification;
     if (stored.purpose !== "forgot-password") {
       return res.status(400).json({
         success: false,

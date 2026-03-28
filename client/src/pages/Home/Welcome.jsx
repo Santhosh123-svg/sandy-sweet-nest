@@ -12,17 +12,25 @@ const Welcome = () => {
 
   const role = localStorage.getItem("role");
 
-  // ✅ 2-SECOND CAKE LOADER ANIMATION
+  const categories = [
+    { name: "Cakes", desc: "Birthday • Wedding • Special" },
+    { name: "Chocolates", desc: "Gift boxes • Special" },
+    { name: "Cookies", desc: "Choco chips • Oats" },
+    { name: "More Items", desc: "Brownies • Pastries" },
+  ];
+
+  // 2-SECOND INTRO LOADER
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowIntro(false);
-    }, 2000);
+    const timer = setTimeout(() => setShowIntro(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    localStorage.removeItem("profileCompleted");
+    localStorage.removeItem("signupName");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 
@@ -33,24 +41,12 @@ const Welcome = () => {
     if (name === "More Items") navigate("/more-items");
   };
 
-  const categories = [
-    { name: "Cakes", desc: "Birthday • Wedding • Special" },
-    { name: "Chocolates", desc: "Gift boxes • Special" },
-    { name: "Cookies", desc: "Choco chips • Oats" },
-    { name: "More Items", desc: "Brownies • Pastries" },
-  ];
-
-  // 🔥 INTRO SCREEN
   if (showIntro) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 to-amber-100">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ 
-            duration: 1.5, 
-            repeat: Infinity, 
-            ease: "linear" 
-          }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
           className="text-8xl drop-shadow-2xl select-none"
         >
           🍰
@@ -63,7 +59,6 @@ const Welcome = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-amber-50 to-amber-100">
       {/* NAVBAR */}
       <nav className="relative isolate z-50 w-full px-6 py-4 flex items-center justify-between bg-white/70 backdrop-blur-md border-b border-white/40 shadow-sm">
-        {/* LEFT */}
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-2xl bg-amber-200 flex items-center justify-center shadow-md">
             <span className="text-xl">🍰</span>
@@ -76,7 +71,6 @@ const Welcome = () => {
           </div>
         </div>
 
-        {/* RIGHT */}
         <div className="relative z-50">
           <button
             className="p-2 rounded-lg bg-white border border-amber-100 shadow-sm hover:bg-amber-50 transition z-50 relative"
@@ -195,9 +189,7 @@ const Welcome = () => {
                       onClick={() => handleCategoryClick(cat.name)}
                       className="p-5 rounded-2xl bg-amber-50 border border-amber-100 shadow-inner cursor-pointer hover:scale-105 transition"
                     >
-                      <h4 className="font-bold text-amber-700 text-lg">
-                        {cat.name}
-                      </h4>
+                      <h4 className="font-bold text-amber-700 text-lg">{cat.name}</h4>
                       <p className="text-gray-600 mt-2">{cat.desc}</p>
                     </div>
                   ))}
@@ -214,32 +206,31 @@ const Welcome = () => {
           <div className="text-gray-600 text-sm">
             © 2026 Sandy’s Sweet Nest • All Rights Reserved
           </div>
-<div className="flex gap-6 text-2xl text-amber-600">
-  <a
-    href="https://www.instagram.com/_jith__sandy_?igsh=ZzVteXU1N2Jjemdi"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    <FaInstagram className="hover:text-amber-600 hover:scale-110 transition" />
-  </a>
+          <div className="flex gap-6 text-2xl text-amber-600">
+            <a
+              href="https://www.instagram.com/_jith__sandy_?igsh=ZzVteXU1N2Jjemdi"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaInstagram className="hover:text-amber-600 hover:scale-110 transition" />
+            </a>
 
-  <a
-    href="https://wa.me/916374122294"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    <FaWhatsapp className="hover:text-green-500 hover:scale-110 transition" />
-  </a>
+            <a
+              href="https://wa.me/916374122294"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaWhatsapp className="hover:text-green-500 hover:scale-110 transition" />
+            </a>
 
-  <a
-    href="https://www.facebook.com/profile.php?id=100088894746265"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    <FaFacebook className="hover:text-blue-600 hover:scale-110 transition" />
-  </a>
-</div>
-
+            <a
+              href="https://www.facebook.com/profile.php?id=100088894746265"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaFacebook className="hover:text-blue-600 hover:scale-110 transition" />
+            </a>
+          </div>
         </div>
       </footer>
     </div>

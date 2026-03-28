@@ -1,16 +1,33 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
+
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   const handleSignup = async () => {
-    if (!name || !email || !password) return alert("Fill all fields");
+    if (!name || !email || !password) {
+      alert("Fill all fields");
+      return;
+    }
+
     try {
       setLoading(true);
+      // API call to signup
       const res = await axiosInstance.post("/api/auth/signup", { name, email, password });
-      alert(res.data.message || "Magic link sent to your email!");
+
+      if (res.data.isNewUser) {
+        alert(res.data.message || "OTP sent to your email!");
+        // Redirect to OTP screen with flow info
+        navigate("/otp", { state: { email, flow: "signup" } });
+      } else {
+        // User already exists
+        alert(res.data.message || "User already exists. Please login.");
+      }
     } catch (err) {
       console.error("Signup error:", err.response?.data || err);
       alert(err.response?.data?.message || "Signup failed. Please try again.");
@@ -18,16 +35,44 @@ const Signup = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-amber-50">
       <div className="bg-white p-6 rounded-2xl shadow-lg w-80">
         <h2 className="text-2xl font-bold text-center text-amber-600 mb-4">Register</h2>
-        <input type="text" placeholder="Name" className="w-full border p-2 rounded mb-3" value={name} onChange={(e) => setName(e.target.value)} />
-        <input type="email" placeholder="Email" className="w-full border p-2 rounded mb-3" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" className="w-full border p-2 rounded mb-4" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button onClick={handleSignup} disabled={loading} className={`w-full bg-amber-500 text-white py-2 rounded font-semibold ${loading ? "opacity-70" : ""}`}>{loading ? "Registering..." : "Register & Get Magic Link"}</button>
+        <input
+          type="text"
+          placeholder="Name"
+          className="w-full border p-2 rounded mb-3"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full border p-2 rounded mb-3"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full border p-2 rounded mb-4"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button
+          onClick={handleSignup}
+          disabled={loading}
+          className={`w-full bg-amber-500 text-white py-2 rounded font-semibold ${
+            loading ? "opacity-70" : ""
+          }`}
+        >
+          {loading ? "Registering..." : "Register & Get OTP"}
+        </button>
       </div>
     </div>
   );
 };
+
 export default Signup;

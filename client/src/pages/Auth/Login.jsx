@@ -9,6 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Detect if user comes from OTP verification page
   const isFromVerify = location.search.includes("fromVerify=true");
 
   const handleLogin = async () => {
@@ -19,20 +20,29 @@ const Login = () => {
 
     try {
       setLoading(true);
+
+      // API call to login
       const res = await axiosInstance.post("/api/auth/login", { email, password });
 
+      // Save token and user info
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
       localStorage.setItem("profileCompleted", res.data.profileCompleted);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("signupName", res.data.user?.name || "");
 
+      // ✅ Redirect based on role and profile completion
       if (res.data.role === "admin") {
         navigate("/admin");
-      } else if (!res.data.profileCompleted) {
-        navigate("/complete-profile");
       } else {
-        navigate("/welcome");
+        if (!res.data.user.isVerified) {
+          alert("Your email is not verified. Please verify OTP first.");
+          navigate("/otp", { state: { email, flow: "login" } });
+        } else if (!res.data.profileCompleted) {
+          navigate("/complete-profile");
+        } else {
+          navigate("/welcome");
+        }
       }
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
@@ -53,6 +63,7 @@ const Login = () => {
             type="email"
             placeholder="Email address"
             className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
 
@@ -60,6 +71,7 @@ const Login = () => {
             type="password"
             placeholder="Password"
             className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
@@ -72,18 +84,15 @@ const Login = () => {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-          
+
           {!isFromVerify && (
             <div className="text-center">
               <button
                 onClick={async () => {
-                  const email = prompt("Please enter your email to reset your account.");
-                  if (!email) {
-                    alert("Please enter your email to reset your account.");
-                    return;
-                  }
+                  const emailPrompt = prompt("Please enter your email to reset your account.");
+                  if (!emailPrompt) return alert("Please enter your email to reset your account.");
                   try {
-                    const res = await axiosInstance.post("/api/auth/forget-account", { email });
+                    const res = await axiosInstance.post("/api/auth/forget-account", { email: emailPrompt });
                     alert(res.data.message || "Your account has been reset. Please register again.");
                     navigate("/signup");
                   } catch (err) {

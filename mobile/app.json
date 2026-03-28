@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SandysSweetNest",
-    "displayName": "Sandy's Sweet Nest",
+    "name": "SSN_Bakery",
+    "displayName": "SSN Bakery",
     "scheme": "sandyapp",
     "platforms": ["ios", "android", "web"],
 

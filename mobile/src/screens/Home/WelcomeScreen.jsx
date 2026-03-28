@@ -141,8 +141,8 @@ const WelcomeScreen = ({ navigation }) => {
   };
 const confirmLogout = () => {
   Alert.alert(
-    "Confirm Logout",
-    "Logout panna poringala?",
+    "Confirm To Logic😔?",
+    "Thank You For Coming🙏",
     [
       { text: "Cancel", style: "cancel" },
       { text: "Yes", onPress: handleLogout },

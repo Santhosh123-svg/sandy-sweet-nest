@@ -5,6 +5,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance from '../utils/axiosInstance';
 import { NavigationContainer } from '@react-navigation/native';
 
+// 🔥 ADD THIS
+import Splash from '../screens/SplashScreen';
+
 // Auth Screens
 import CompleteProfileScreen from '../screens/Auth/CompleteProfileScreen';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPasswordScreen';
@@ -38,7 +41,6 @@ const Stack = createStackNavigator();
 
 const AppNavigator = () => {
 
-  // 🔥 Deep Link Handler (unchanged)
   const handleDeepLink = async (url, navigation) => {
     if (!url) return;
     try {
@@ -69,9 +71,13 @@ const AppNavigator = () => {
   return (
     <NavigationContainer linking={{ prefixes: ['sandyapp://'] }} fallback={null}>
       <Stack.Navigator
-        initialRouteName="Login"
+        // 🔥 CHANGE HERE
+        initialRouteName="Splash"
         screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#fffbeb' } }}
       >
+
+        {/* 🔥 ADD THIS */}
+        <Stack.Screen name="Splash" component={Splash} />
 
         {/* Authentication */}
         <Stack.Screen name="Login">
@@ -82,8 +88,6 @@ const AppNavigator = () => {
               return () => sub.remove();
             }, []);
 
-            // ✅ First app entry: always show Login
-            // ✅ Old users handled in OTPScreen or Login success
             return <LoginScreen {...props} />;
           }}
         </Stack.Screen>

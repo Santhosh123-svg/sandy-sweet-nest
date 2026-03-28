@@ -28,7 +28,7 @@ const CompleteProfile = () => {
             address: res.data.address || "",
           });
 
-          // If not in edit mode and profile already completed, redirect to welcome
+          // Redirect to welcome if profile already completed and not in edit mode
           if (!isEditMode && res.data.profileCompleted) {
             navigate("/welcome");
           }
@@ -37,7 +37,6 @@ const CompleteProfile = () => {
         console.error("Fetch profile error:", err);
       }
     };
-
     fetchData();
   }, [navigate, isEditMode]);
 
@@ -56,14 +55,14 @@ const CompleteProfile = () => {
 
     // Validation: Name must match registration name (only on first submission)
     if (!isEditMode && formData.name.toLowerCase() !== signupName.toLowerCase()) {
-      setError("The name you entered does not match your registration name. Please enter the same name as used during signup.");
+      setError("The name must match your registration name. Please enter the same name used during signup.");
       return;
     }
 
     try {
       setLoading(true);
       const res = await axiosInstance.put("/api/auth/complete-profile", formData);
-      
+
       if (res.data.success) {
         localStorage.setItem("profileCompleted", "true");
         if (res.data.user) {
@@ -118,7 +117,7 @@ const CompleteProfile = () => {
             </div>
           </div>
 
-        <div className="relative">
+          <div className="relative">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Phone Number</label>
             <div className="flex items-center mt-1 group">
               <Phone className="absolute left-3 text-gray-400 group-focus-within:text-amber-500 transition-colors w-5 h-5" />
@@ -131,7 +130,7 @@ const CompleteProfile = () => {
                 onChange={handleChange}
               />
             </div>
-        </div> 
+          </div>
 
           <div className="relative">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Full Address</label>

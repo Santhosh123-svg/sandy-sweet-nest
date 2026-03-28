@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
-import Verify from "./pages/Auth/MagicVerify";
+// 🔥 Updated OTP screen
+import OtpScreenWeb from "./pages/Auth/OtpScreenWeb";
 import CompleteProfile from "./pages/Auth/CompleteProfile";
 import Welcome from "./pages/Home/Welcome";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -32,7 +33,8 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/magic-verify" element={<Verify />} />
+          {/* 🔥 Updated OTP route */}
+          <Route path="/magic-verify" element={<OtpScreenWeb />} />
           <Route path="/complete-profile" element={<CompleteProfile />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/admin" element={<AdminDashboard />} />

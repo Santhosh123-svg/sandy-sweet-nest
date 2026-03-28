@@ -58,12 +58,22 @@ const ResetPasswordScreen = () => {
   };
 
   const handleSubmit = async () => {
-    if (!newPassword || !confirmPassword) {
+    const password = newPassword.trim();
+    const confirm = confirmPassword.trim();
+
+    if (!email) {
+      Alert.alert("Error", "Session expired. Please try again.");
+      navigation.replace("Login");
+      return;
+    }
+
+    if (!password || !confirm) {
       triggerShake();
       Alert.alert("Error", "Please fill all fields");
       return;
     }
-    if (newPassword !== confirmPassword) {
+
+    if (password !== confirm) {
       triggerShake();
       Alert.alert("Error", "Passwords do not match");
       return;
@@ -71,14 +81,18 @@ const ResetPasswordScreen = () => {
 
     try {
       setLoading(true);
+
       await axiosInstance.post("/api/auth/reset-password", {
         email,
-        newPassword,
+        newPassword: password,
       });
+
       Alert.alert("Success", "Password reset successful", [
         { text: "OK", onPress: () => navigation.replace("Login") },
       ]);
     } catch (err) {
+      console.log("RESET ERROR 👉", err?.response?.data);
+
       Alert.alert(
         "Failed",
         err?.response?.data?.message || "Unable to reset password"
@@ -128,8 +142,20 @@ const ResetPasswordScreen = () => {
             value={newPassword}
             onChangeText={setNewPassword}
             secureTextEntry
-            onFocus={() => Animated.timing(focusAnim1, { toValue: 1, duration: 200, useNativeDriver: false }).start()}
-            onBlur={() => Animated.timing(focusAnim1, { toValue: 0, duration: 200, useNativeDriver: false }).start()}
+            onFocus={() =>
+              Animated.timing(focusAnim1, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: false,
+              }).start()
+            }
+            onBlur={() =>
+              Animated.timing(focusAnim1, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: false,
+              }).start()
+            }
           />
         </Animated.View>
 
@@ -143,19 +169,31 @@ const ResetPasswordScreen = () => {
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
-            onFocus={() => Animated.timing(focusAnim2, { toValue: 1, duration: 200, useNativeDriver: false }).start()}
-            onBlur={() => Animated.timing(focusAnim2, { toValue: 0, duration: 200, useNativeDriver: false }).start()}
+            onFocus={() =>
+              Animated.timing(focusAnim2, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: false,
+              }).start()
+            }
+            onBlur={() =>
+              Animated.timing(focusAnim2, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: false,
+              }).start()
+            }
           />
         </Animated.View>
 
         {/* BUTTON */}
         <Animated.View style={{ transform: [{ scale: scaleBtn }] }}>
           <TouchableOpacity
-            style={[styles.button, loading && styles.disabled]}
+            style={[styles.button, (loading || !email) && styles.disabled]}
             onPress={handleSubmit}
             onPressIn={pressIn}
             onPressOut={pressOut}
-            disabled={loading}
+            disabled={loading || !email}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />
