@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 
@@ -9,8 +9,12 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Detect if user comes from OTP verification page
-  const isFromVerify = location.search.includes("fromVerify=true");
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("verified") === "true") {
+      alert("Email verified successfully! Please login.");
+    }
+  }, [location.search]);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -20,24 +24,21 @@ const Login = () => {
 
     try {
       setLoading(true);
-
-      // API call to login
       const res = await axiosInstance.post("/api/auth/login", { email, password });
 
-      // Save token and user info
+      // Save token & user info
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
       localStorage.setItem("profileCompleted", res.data.profileCompleted);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("signupName", res.data.user?.name || "");
 
-      // ✅ Redirect based on role and profile completion
+      // ✅ Redirect based on role & profile completion
       if (res.data.role === "admin") {
         navigate("/admin");
       } else {
         if (!res.data.user.isVerified) {
-          alert("Your email is not verified. Please verify OTP first.");
-          navigate("/otp", { state: { email, flow: "login" } });
+          alert("Your email is not verified. Check your email for magic link.");
         } else if (!res.data.profileCompleted) {
           navigate("/complete-profile");
         } else {
@@ -66,7 +67,6 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-
           <input
             type="password"
             placeholder="Password"
@@ -85,36 +85,12 @@ const Login = () => {
             {loading ? "Logging in..." : "Login"}
           </button>
 
-          {!isFromVerify && (
-            <div className="text-center">
-              <button
-                onClick={async () => {
-                  const emailPrompt = prompt("Please enter your email to reset your account.");
-                  if (!emailPrompt) return alert("Please enter your email to reset your account.");
-                  try {
-                    const res = await axiosInstance.post("/api/auth/forget-account", { email: emailPrompt });
-                    alert(res.data.message || "Your account has been reset. Please register again.");
-                    navigate("/signup");
-                  } catch (err) {
-                    alert(err.response?.data?.message || "Account reset failed.");
-                  }
-                }}
-                className="text-sm text-amber-600 hover:underline font-medium"
-              >
-                Forget Password?
-              </button>
-            </div>
-          )}
-        </div>
-
-        {!isFromVerify && (
-          <p className="text-sm text-center mt-6 text-gray-600">
-            New user?{" "}
+          <div className="text-center mt-4">
             <Link to="/signup" className="text-amber-600 font-semibold hover:underline">
-              Register here
+              New user? Register here
             </Link>
-          </p>
-        )}
+          </div>
+        </div>
       </div>
     </div>
   );

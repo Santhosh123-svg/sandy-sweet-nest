@@ -17,17 +17,14 @@ const Signup = () => {
 
     try {
       setLoading(true);
-      // API call to signup
       const res = await axiosInstance.post("/api/auth/signup", { name, email, password });
 
-      if (res.data.isNewUser) {
-        alert(res.data.message || "OTP sent to your email!");
-        // Redirect to OTP screen with flow info
-        navigate("/otp", { state: { email, flow: "signup" } });
-      } else {
-        // User already exists
-        alert(res.data.message || "User already exists. Please login.");
-      }
+      alert(res.data.message || "Magic link sent! Click the link in your email to verify.");
+
+      // 🔥 No OTP screen navigation
+      // Frontend waits for user to click link → goes to login page
+      navigate("/login");
+
     } catch (err) {
       console.error("Signup error:", err.response?.data || err);
       alert(err.response?.data?.message || "Signup failed. Please try again.");
@@ -68,7 +65,7 @@ const Signup = () => {
             loading ? "opacity-70" : ""
           }`}
         >
-          {loading ? "Registering..." : "Register & Get OTP"}
+          {loading ? "Registering..." : "Register & Send Magic Link"}
         </button>
       </div>
     </div>
