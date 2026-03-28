@@ -36,13 +36,15 @@ const Login = () => {
 
       // Save token & user info
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", user.role);
+      // ✅ FIX: normalize role to lowercase
+      localStorage.setItem("role", (user.role || "").toLowerCase());
       localStorage.setItem("profileCompleted", user.profileCompleted);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("signupName", user?.name || "");
 
       // ✅ Redirect based on role & profile completion
-      if (user.role === "admin") {
+      const role = (user.role || "").toLowerCase();
+      if (role === "admin") {
         navigate("/admin");
       } else if (!user.profileCompleted) {
         navigate("/complete-profile");
