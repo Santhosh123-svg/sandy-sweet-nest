@@ -50,7 +50,7 @@ const Splash = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Animated.Image
-        source={require("../assets/LOGO2.jpeg")}
+        source={require("../../assets/LOGO2.jpeg")}
         style={{
           width: 180,
           height: 180,
